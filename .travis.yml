@@ -2,7 +2,7 @@
 before_script:
   - mkdir bin
   - cd bin
-  - curl -L https://github.com/yihui/ubuntu-bin/releases/download/latest/pandoc.tar.gz | tar xvf
+  - curl -L https://github.com/yihui/ubuntu-bin/releases/download/latest/pandoc.tar.gz | tar xvz
   - export PATH="$PATH:/home/travis/bin"
 script: |
   [ $TRAVIS_BRANCH = master ] &&
