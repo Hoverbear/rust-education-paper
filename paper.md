@@ -26,8 +26,14 @@ references:
     title: A Fresh Look at Rust
     URL: http://lucumr.pocoo.org/2014/10/1/a-fresh-look-at-rust/#designing-apis
   - id: go-fn
-    title: Go Blog - Function Declaration
+    title: "Go Blog: Function Declaration"
     URL: https://blog.golang.org/gos-declaration-syntax
+  - id: billion-dollar
+    title: "Null References: The Billion Dollar Mistake"
+    author: 
+        - given: Tony
+          family: Hoare
+    URL: http://www.infoq.com/presentations/Null-References-The-Billion-Dollar-Mistake-Tony-Hoare
 ---
 
 # The State of the OS Course
@@ -93,9 +99,62 @@ fn example_generic<U: Read>(reader: U) -> u64 {}
 fn example_generic_alt<U>(reader: U) -> u64 where U: Read {}
 ```
 
-### Types
+### A Strong Type System
+
+In some problem areas it is desirable to have a dynamic type system, particularly in higher level code. Implicit, possibly lossy data conversions can often be dangerous in system code. It is common for OS students to accidently take a pointer as a value, or vice versa. It would be desirable to have a stronger type system.
+
+For example, in C:
+
+```c
+void main() {
+    float foo = 1.1;
+    // Lossy conversion.
+    int bar = foo;  // No error.
+    // Possibly unintended conversion.
+    int baz = &foo; // Compile-time Warning.
+}
+```
+
+Conversely, in Rust explicit conversions are required:
+
+```rust
+fn main() {
+    let foo = 1.1;
+    // Lossy converstion.
+    let bar = foo as u64;
+    // Potentially unintended conversion.
+    let baz = &foo as u64; // Compile-time error.
+}
+```
+
+The programmer is not *prevented* from doing these things, Rust only ensures that it is actually the intended action.
 
 ### On the Lack of `null`
+
+Cited by its creator (@billion-dollar) as a 'billion-dollar mistake' `null` is one of the most dangerous thorns in a coder's toolbox. For example, every time a programmer wishes to `malloc` they must change for the pointer to be a `null`, libraries return it often without forewarning. This all happens implictly, the author of the code must keep all of this information in their head. The consequences for making a mistake could be dramatic in lower level code. Segfaults, deadlocks, and system failure are all very real possibilities when exploring complex OS code.
+
+Many functional languages like Haskell and F# have the concept of an `Option`, a concept that Rust shares. Instead of needing to be aware of and check for `null` at every occurance, the language semantics require the programmer to explicitly decide on the control flow for all values. It is common for newcomers to the language to dislike the "noise" this brings to the code, but once they understand the benefits of this design choice, and the ways to work with it, these complaints tend fade.
+
+In Rust the `Option<T>` enum exists as either a `Some(T)` or a `None`. Rust provides a number of techniques for working with this type. First, is the simple "just crash if it doesn't work" call `.unwrap()`, then there is `.unwrap_or(some_default)`. As well there are functions like `.is_some()` and `.is_none()` which function as expected. It's also possible work work with an optional value without unwrapping it. It is very common to utilize Rust's `match` expression to handle control flow and unwrap enumerated values.
+
+```rust
+// Create a `Some(T)` and a None.
+let maybe_foo = Some(0);
+let not_foo = None;
+// Unwrapping.
+let foo = maybe_foo.unwrap();
+let default = not_foo.unwrap_or(1);
+let matched = match maybe_foo {
+    Some(x) => x,
+    None => -1,
+}
+// Mapping
+let mapped = maybe_foo.map(|x| x as f64);
+```
+
+### Handling Errors
+
+`Result<T, E>` enum exists as either `Ok(T)` or `Err(E)` conveys the result of something which may fail with an error.
 
 ### Borrow and Move Semantics
 
