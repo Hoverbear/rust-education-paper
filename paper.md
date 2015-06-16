@@ -214,11 +214,30 @@ fn open_and_read() -> Result<usize, MyError> {
 }
 ```
 
-
+Error handling in Rust is explicit, composable, and sane. There are no exceptions, nulls, 'special numbers' (like -1) or anything that may prevent the programmer from handling the error as *they* choose to, even if that is to simply `.unwrap()` it and crash on failure.
 
 ### Borrow and Move Semantics
 
 ### Traits
+
+Unlike many common languages today Rust does not use a class based or inheritance based system. Data is stored in `struct`s, primitives, or `enum`s which implement a set of traits that define how it interacts and which functions are available to it. To someone familiar with Java or C++, traits may feel like interfaces. For example, the `File` is a `struct` which implements `Read` and `Write` among other traits. Other structures like `TcpStream` and `UdpSocket` also implement the same `Read` and `Write` interface. Traits are zero-cost abstractions that act to encourage common interfaces and capabilities between like-structures.
+
+```rust
+struct Thing {
+    barred: bool,
+}
+trait Foo {
+    // Implementor must define.
+    fn bar(&mut self);
+    // Default definition.
+    fn do_bar(&mut self) { self.bar() }
+}
+impl Foo for Thing {
+    fn bar(&mut self) {
+        self.barred = true;
+    }
+}
+```
 
 ## Safety as a First-Class Goal
 
