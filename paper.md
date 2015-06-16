@@ -9,30 +9,44 @@ abstract: |
 references:
   - id: rust
     title: Rust
+    type: webpage
     URL: http://rust-lang.org/
   - id: rust-release
     title: Announcing Rust 1.0
+    type: webpage
     URL: http://blog.rust-lang.org/2015/05/15/Rust-1.0.html
   - id: no-std
+    type: webpage
     title: libcore
     URL: http://doc.rust-lang.org/book/no-stdlib.html
   - id: uls
     title: Ultra-Large-Scale Systems
+    type: webpage
     URL: https://www.sei.cmu.edu/uls/
   - id: redis
     title: Redis
+    type: webpage
     URL: http://redis.io/
   - id: redis-api
     title: A Fresh Look at Rust
+    type: webpage
+    author:
+      - given: Armin
+        family: Ronacher
     URL: http://lucumr.pocoo.org/2014/10/1/a-fresh-look-at-rust/#designing-apis
   - id: go-fn
     title: "Go Blog: Function Declaration"
+    author:
+        - given: Rob
+          family: Pike
+    type: webpage
     URL: https://blog.golang.org/gos-declaration-syntax
   - id: billion-dollar
     title: "Null References: The Billion Dollar Mistake"
     author:
         - given: Tony
           family: Hoare
+    type: webpage
     URL: http://www.infoq.com/presentations/Null-References-The-Billion-Dollar-Mistake-Tony-Hoare
 ---
 
