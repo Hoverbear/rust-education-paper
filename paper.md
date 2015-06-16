@@ -55,6 +55,13 @@ references:
         family: Turon
     type: webpage
     URL: http://blog.rust-lang.org/2015/05/11/traits.html
+  - id: travis-docs
+    title: "Rust, Travis, and Github Pages"
+    author:
+      - given: Andrew
+        family: Hobden
+    type: webpage
+    URL: http://hoverbear.org/2015/03/06/rust-travis-github-pages/
 ---
 
 # The State of the OS Course
@@ -67,10 +74,11 @@ At the University of Victoria evaluation is typically done through an interactiv
 
 # Introducing Rust
 
-Rust @rust is a systems oriented ML-family language supported by Mozilla Research. It was originally developed by Graydon Hoare (TODO: Reference) and reaches it's first stable release on May 15, 2015 @rust-release.
+Rust (@rust) is a systems oriented ML-family language supported by Mozilla Research. It was originally developed by Graydon Hoare (TODO: Reference) and reaches it's first stable release on May 15, 2015 (@rust-release).
 
 Rust offers a robust set of desirable features for systems code:
 
+* Ahead-of-time compilation
 * Zero-cost abstractions
 * Move semantics
 * Guaranteed memory safety
@@ -78,11 +86,11 @@ Rust offers a robust set of desirable features for systems code:
 * Trait-based generics
 * Pattern matching
 * Type inference
-* Minimal runtime (removable @no-std)
+* Minimal runtime (removable, @no-std)
 * Efficient C bindings
 * Robust static analysis
 
-It accomplishes these features through a number of novel features largely built off it's type system and the borrow checker. Both will be covered below. The Rust community has been working to firmly position Rust as a powerful tool for programming in the large @uls.
+It accomplishes these features through a number of novel features largely built off it's type system and the borrow checker. Both will be covered below. The Rust community has been working to firmly position Rust as a powerful tool for programming in the large (@uls).
 
 ## Rust Basics
 
@@ -98,11 +106,11 @@ The only quality of the above code which may be at all suprising to programmers 
 
 > It is better to be explicit and promote understanding of what is occuring, than to expect the programmer to maintain all of this information in their head.
 
-This quality does not do away with conciseness, or elegance of code. Community members have developed bindings for well-known tools like Redis @redis and found the APIs for equivalent Rust and Python actions of relatively similar "feel", despite the benefits of Rust's type system providing an additional safety net @redis-api.
+This quality does not do away with conciseness, or elegance of code. Community members have developed bindings for well-known tools like Redis (@redis) and found the APIs for equivalent Rust and Python actions of relatively similar "feel", despite the benefits of Rust's type system providing an additional safety net (@redis-api).
 
 Rust does, however, have significant semantic differences compared to C-like languages. For variable declaration, Rust has the `let` keyword which is *immutable by default*, mutability is opt-in via `let mut`. The Rust compiler also enforces best practices, for example, introducing a file-level `const` which is not in all capitals is a compile-time error.(TODO: Check this is still the case)
 
-As well, function definitions differ from C-like languages. This change makes function definitions easier to comprehend when dealing with complex parameters, generics, and return values. Numerous reasoning for why C's declaration syntax is inadequate were well explained by Rob Pike @go-fn.
+As well, function definitions differ from C-like languages. This change makes function definitions easier to comprehend when dealing with complex parameters, generics, and return values. Numerous reasoning for why C's declaration syntax is inadequate were well explained by Rob Pike (@go-fn).
 
 ```rust
 fn example_simple() {}
@@ -219,7 +227,7 @@ Error handling in Rust is explicit, composable, and sane. There are no exception
 
 ## Traits: Zero-cost Abstractions
 
-Unlike many common languages today Rust does not use a class based or inheritance based system. Data is stored in `struct`s, primitives, or `enum`s which implement a set of traits that define how it interacts and which functions are available to it. To someone familiar with Java or C++, traits may feel like interfaces. For example, the `File` is a `struct` which implements `Read` and `Write` among other traits. Other structures like `TcpStream` and `UdpSocket` also implement the same `Read` and `Write` interface. Traits are zero-cost abstractions that act to encourage common interfaces and capabilities between like-structures. @abstraction
+Unlike many common languages today Rust does not use a class based or inheritance based system. Data is stored in `struct`s, primitives, or `enum`s which implement a set of traits that define how it interacts and which functions are available to it. To someone familiar with Java or C++, traits may feel like interfaces. For example, the `File` is a `struct` which implements `Read` and `Write` among other traits. Other structures like `TcpStream` and `UdpSocket` also implement the same `Read` and `Write` interface. Traits are zero-cost abstractions that act to encourage common interfaces and capabilities between like-structures. (@abstraction)
 
 ```rust
 struct Thing {
@@ -252,6 +260,25 @@ impl Foo for Thing {
 
 ## Tooling
 
+One significant advantage of using Rust over its alternatives is its robust, opinionated set of tooling. The Rust standard distribution includes `rustc` (the compiler), `cargo` (a package manager and build tool), and `rustdoc` (a documentation generator). Currently there is work being done on a `rustfmt` which woud function the same as Go's venerable `gofmt`.
+
+Package management is a feature Rust has inherited from several other modern languages. `cargo` behaves similar to Ruby's `bundler`, indeed it was created by the same person even! All package dependencies, build options, and tasks are defined in a `Cargo.toml` file. Package versions are kept in a `Cargo.lock` that `cargo` creates whenever it needs. There is no 'fetch' or 'install' command, dependencies are checked and (if necessary) pulled on `cargo build`, `test`, or `doc`.
+
+Rust supports both *unit tests* and *integration tests* by default. Unit tests may appear wherever is appropriate in the code and are annotated by `#[test]`, it's common for designers to include a `test` module in their code. Integration tests are written in the `tests/` directory and allow a package to be tested as a depended upon library. Testing is done by simply invoking `cargo test` in the project directory. These features blow away barriers which programmers might face in other languages that would prevent them from bothering to test. Additionally, it makes marking Rust based projects very easy, all an instructor needs to do is provide (or replace) the `tests/` directory with an appropriate suite.
+
+```rust
+#[test]
+fn test_passes() {
+    assert_eq!(true, true);
+}
+#[test]
+#[should_panic]
+fn test_fails() {
+    assert!(true == false);
+}
+```
+
+Having a standardized, high quality documentation format is invaluable for programmers, and Rust facilitates this. Documentation comments are can be placed anywhere in the code using `///` for function level documentation or `//!` for module level documentation. Documentation is in a common markdown format, code samples included in the documentation are automatically processed as unit tests. Generating documentation is done by `cargo doc`, which generates HTML and manpage documentation. Many Rust projects even go so far as to automate the unit testing and documentation generation step and hook it into their git commits (@travis-docs).
 
 # A Comparison with C
 
