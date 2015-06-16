@@ -66,6 +66,45 @@ references:
     title: "Rust: Academic Research"
     type: webpage
     URL: https://doc.rust-lang.org/nightly/book/academic-research.html
+  - id: compatability
+    title: Stability as a Deliverable
+    type: webpage
+    URL: https://doc.rust-lang.org/nightly/book/academic-research.html
+    authors:
+      - given: Aaron
+        family: Turon
+      - given: Niko
+        family: Matsakis
+  - id: release-schedule
+    title: Scheduling the Trains
+    type: webpage
+    URL: http://blog.rust-lang.org/2014/12/12/1.0-Timeline.html
+    author:
+      - given: Aaron
+        family: Turon
+  - id: semantic-versioning
+    title: Semantic Versioning
+    type: webpage
+    URL: http://semver.org/
+  - id: rust-stackoverflow
+    title: Rust Stack Overflow
+    type: webpage
+    URL: https://stackoverflow.com/questions/tagged/rust
+  - id: coreutils
+    title: uutils/coreutils
+    type: webpage
+    URL: https://github.com/uutils/coreutils
+  - id: rust-boot
+    title: Writing an OS in Rust in Tiny Steps
+    type: webpage
+    author:
+      - given: Julia
+        family: Evans
+    URL: http://jvns.ca/blog/2014/03/12/the-rust-os-story/
+  - id: zinc
+    title: zinc.rs
+    type: webpage
+    URL: http://zinc.rs/
 ---
 
 # The State of the OS Course
@@ -308,15 +347,16 @@ Having a standardized, high quality documentation format is invaluable for progr
 Rust is born of strong research. It is strongly founded on a set of well reasoned, influential [papers](https://doc.rust-lang.org/nightly/book/academic-research.html
 ) (@rust-research). The language was originally developed by Graydon Hoare and is MIT licensed. There has been over 1017 contributors to the project, including signficant contributions by Mozilla Research, Samsung Research, and Tilde.
 
-There are active researchers working on Rust and the language is rolling forward on a 6 week schedule, but all code compatible with current versions of Rust will be compatible with Rust until version 2.0 (CITEME). This schedule is the same as Mozilla's highly successful Firefox model (CITEME) and follows semantic versioning (CITEME). This makes the language a target for active feature and fix development, since it releases often, while keeping it stable for industrial use.
+There are active researchers working on Rust and the language is rolling forward on a 6 week schedule, but all code compatible with current versions of Rust will be compatible with Rust until version 2.0 (@compatability). This schedule is the same as Mozilla's highly successful Firefox model (@release-schedule) and follows semantic versioning (@semantic-versioning). This makes the language a target for active feature and fix development, since it releases often, while keeping it stable for industrial use.
 
 # Community
 
 One of the biggest dangers in choosing a language that "Is not C" to teach operating systems in is that it can be very difficult for students to get help. There is very little operating systems development in languages like Python, C#, or Java and what does exist is often rather exotic, especially compared to the extremely well documented C problems that crop up.
 
-Mozilla's IRC network hosts the popular #rust channel which regularly has over 800 members at any given time. [`crates.io`](http://crates.io/) hosts over 2300 'crates', Rust's nickname for a package. The language reached 1.0 on (FINDME) following (FINDME) years of development. The community is active and friendly with special interest groups hosting their own channels for various purposes. There are a number of active article feeds and active discussion on Stack overflow. (CITEME)
+Mozilla's IRC network hosts the popular #rust channel which regularly has over 800 members at any given time. [`crates.io`](http://crates.io/) hosts over 2300 'crates', Rust's nickname for a package. The language reached 1.0 on (FINDME) following (FINDME) years of development. The community is active and friendly with special interest groups hosting their own channels for various purposes. There are a number of active article feeds and active discussion on [Stack Overflow](https://stackoverflow.com/questions/tagged/rust
+). (@rust-stackoverflow)
 
-Best of all, there is active operating system development in Rust. There is a project to develop `coreutils` (CITEME), a bootloader (CITEME), a kernel (CITEME), and embedded system platforms (CITEME). At the time of writing, these projects are young enough that students could even contribute components upstream.
+Best of all, there is active operating system development in Rust. There is a project to develop `coreutils` (@coreutils), a kernel (@rust-boot), and embedded system platforms (@zinc). At the time of writing, these projects are young enough that students could even contribute components upstream.
 
 # A Comparison with C
 
