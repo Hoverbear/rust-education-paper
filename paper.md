@@ -62,6 +62,10 @@ references:
         family: Hobden
     type: webpage
     URL: http://hoverbear.org/2015/03/06/rust-travis-github-pages/
+  - id: rust-research
+    title: "Rust: Academic Research"
+    type: webpage
+    URL: https://doc.rust-lang.org/nightly/book/academic-research.html
 ---
 
 # The State of the OS Course
@@ -225,6 +229,25 @@ Error handling in Rust is explicit, composable, and sane. There are no exception
 
 ## Borrow and Move: Lose the GC
 
+Memory management is hard, that's why programmers invented the garbage collector. These days there are tracing GCs, generational GCs, and all sorts of exotic algorithms to sweep up unused memory. This all arises from the archaic assumption that compilers cannot perform enough static analysis to accurately trace the lifetime of a value throughout the execution of a program. For many languages this is quite true, C being one of the primary offenders. In Rust there is the notion of moving, copying, and referencing.
+
+Like C and C++, Rust features a powerful pointer system that allows programmers to make fine-grain, informed decisions about how values are stored, passed, and represented. Rust goes a step further, introducing the distinction between *immutably borrowing* (`&`), *mutably borrowing* (`&mut`), *copying* (`Copy` trait), and *moving* values. This makes it simple for a programmer to observe a function signature and determine which values the function may mutate or consume, and which it may return. Using this information the compiler is able to determine the lifetime constraints of almost any value without additional notations. In (rare, complex) cases where it does require additional information the programmer can annotate lifetimes just as they would with generic types.
+
+```rust
+// `bool` has a `Copy` trait.
+let foo = true;
+// Immutable reference.
+let ref_of_foo = &foo;
+ref_of_foo = false; // Error
+// Mutable reference.
+let mut_ref = &mut foo;
+mut_ref = false;
+// Make a copy.
+let other_foo = foo;
+```
+
+
+
 ## Traits: Zero-cost Abstractions
 
 Unlike many common languages today Rust does not use a class based or inheritance based system. Data is stored in `struct`s, primitives, or `enum`s which implement a set of traits that define how it interacts and which functions are available to it. To someone familiar with Java or C++, traits may feel like interfaces. For example, the `File` is a `struct` which implements `Read` and `Write` among other traits. Other structures like `TcpStream` and `UdpSocket` also implement the same `Read` and `Write` interface. Traits are zero-cost abstractions that act to encourage common interfaces and capabilities between like-structures. (@abstraction)
@@ -279,6 +302,21 @@ fn test_fails() {
 ```
 
 Having a standardized, high quality documentation format is invaluable for programmers, and Rust facilitates this. Documentation comments are can be placed anywhere in the code using `///` for function level documentation or `//!` for module level documentation. Documentation is in a common markdown format, code samples included in the documentation are automatically processed as unit tests. Generating documentation is done by `cargo doc`, which generates HTML and manpage documentation. Many Rust projects even go so far as to automate the unit testing and documentation generation step and hook it into their git commits (@travis-docs).
+
+# Research
+
+Rust is born of strong research. It is strongly founded on a set of well reasoned, influential [papers](https://doc.rust-lang.org/nightly/book/academic-research.html
+) (@rust-research). The language was originally developed by Graydon Hoare and is MIT licensed. There has been over 1017 contributors to the project, including signficant contributions by Mozilla Research, Samsung Research, and Tilde.
+
+There are active researchers working on Rust and the language is rolling forward on a 6 week schedule, but all code compatible with current versions of Rust will be compatible with Rust until version 2.0 (CITEME). This schedule is the same as Mozilla's highly successful Firefox model (CITEME) and follows semantic versioning (CITEME). This makes the language a target for active feature and fix development, since it releases often, while keeping it stable for industrial use.
+
+# Community
+
+One of the biggest dangers in choosing a language that "Is not C" to teach operating systems in is that it can be very difficult for students to get help. There is very little operating systems development in languages like Python, C#, or Java and what does exist is often rather exotic, especially compared to the extremely well documented C problems that crop up.
+
+Mozilla's IRC network hosts the popular #rust channel which regularly has over 800 members at any given time. [`crates.io`](http://crates.io/) hosts over 2300 'crates', Rust's nickname for a package. The language reached 1.0 on (FINDME) following (FINDME) years of development. The community is active and friendly with special interest groups hosting their own channels for various purposes. There are a number of active article feeds and active discussion on Stack overflow. (CITEME)
+
+Best of all, there is active operating system development in Rust. There is a project to develop `coreutils` (CITEME), a bootloader (CITEME), a kernel (CITEME), and embedded system platforms (CITEME). At the time of writing, these projects are young enough that students could even contribute components upstream.
 
 # A Comparison with C
 
