@@ -30,7 +30,7 @@ references:
     URL: https://blog.golang.org/gos-declaration-syntax
   - id: billion-dollar
     title: "Null References: The Billion Dollar Mistake"
-    author: 
+    author:
         - given: Tony
           family: Hoare
     URL: http://www.infoq.com/presentations/Null-References-The-Billion-Dollar-Mistake-Tony-Hoare
@@ -96,7 +96,8 @@ fn example_simple() {}
 fn example_params(x: u64, y: &u64, z: &mut u64) {}
 fn example_returns(x: u64) -> u64 {}
 fn example_generic<U: Read>(reader: U) -> u64 {}
-fn example_generic_alt<U>(reader: U) -> u64 where U: Read {}
+fn example_generic_alt<U>(reader: U) -> u64
+    where U: Read {}
 ```
 
 ### A Strong Type System
@@ -154,7 +155,52 @@ let mapped = maybe_foo.map(|x| x as f64);
 
 ### Handling Errors
 
-`Result<T, E>` enum exists as either `Ok(T)` or `Err(E)` conveys the result of something which may fail with an error.
+`Result<T, E>` enum exists as either `Ok(T)` or `Err(E)` conveys the result of something which may fail with an error. Overall this type feels like an `Option<T>` as above, and is interacted with in largely the same way except that the `Err(E)` value contains an error type which details information about the error. Using Rust's `match` expression the user can act on various error conditions or success.
+
+```rust
+use std::io;
+use std::error::Error;
+// Create an error. (Normally raised from lib)
+let error = io::Error::new(io::ErrorKind::Other,
+    "I'm an example error!");
+// The two result variants. Type notations usually
+// not necessary except in small examples.
+let success: Result<_, io::Error> = Ok("Success!");
+let failure: Result<&str, _> = Err(error);
+// Return either the value or the error description.
+let val_or_desc = match success {
+    Ok(val) => val,
+    Err(ref e)  => e.description(),
+};
+```
+
+It is a compiler warning to perform an action such as `file.read_to_string()` which returns a `Result<usize, Error>` and to not handle the error in some way. In Rust is it idiomatic for any recoverable error to be passed up the call stack to where it is sensibly handled. In approaching this idea newcomers typically struggle with the fact that an `io::Error` and a `Utf8Error` are different types. This is typically solved by creating a new `Error` which is an enumeration over the possible underlaying errors. Then there are the `Into<T>` and `From<T>` traits which can be implemented to provide seamless interaction.
+
+```rust
+pub enum MyError {
+    Io(io::Error),
+    Utf8(Utf8Error)
+}
+impl From<io::Error> for MyError {
+    fn from(err: io::Error) -> Error {
+        Error::Io(err)
+    }
+}
+// ...
+```
+
+When working with functions which may return a `Result<T, E>` it is common to use the `try!()` macro. This macro expands to either unwrap the `T` value inside and assign it, or return the error up the call stack. This helps reduce visual 'noise' and assist in composition.
+
+```rust
+fn open_and_read() -> Result<usize, MyError> {
+    let mut f = try!(File::open("foo.txt"));
+    let mut s = String::new();
+    let num_read = try!(f.read_to_string(&mut s));
+    Ok(num_read)
+}
+```
+
+
 
 ### Borrow and Move Semantics
 
