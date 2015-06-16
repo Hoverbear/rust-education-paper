@@ -48,6 +48,13 @@ references:
           family: Hoare
     type: webpage
     URL: http://www.infoq.com/presentations/Null-References-The-Billion-Dollar-Mistake-Tony-Hoare
+  - id: abstraction
+    title: "Abstraction without overhead: traits in Rust"
+    author:
+      - given: Aaron
+        family: Turon
+    type: webpage
+    URL: http://blog.rust-lang.org/2015/05/11/traits.html
 ---
 
 # The State of the OS Course
@@ -57,14 +64,6 @@ Concurrency, parallelism, memory management, process scheduling, deadlocks, mute
 Instructors may also find themselves struggling, as these assignments can be difficult to create, and at times nearly impossible to evaluate. Instructors and their markers desire assignments which are simple enough to fit into a few files, demonstrate understanding of failure modes, can be tested effectively in a preferrably automated fashion, and show students the caveats of their attempts to solve the problem. In many cases, a tradeoff is necessary. Building an interactive shell is a common, and much loved, assignment in which instructors must balance the number of features required with the time provided. Features such as pipes, background tasks, tab-completion, and environment variables are all desirable and interesting to implement, but contribute greatly to the complexity of the code, as well as the amount of time it takes to evaluate.
 
 At the University of Victoria evaluation is typically done through an interactive demo involving the student and one of the teaching assistants. This method gives the student a chance to explain qualities and characteristics of their code, demonstrate it's features, and explain any possible bugs which may be discovered as the code is tested. Testing is often light and relatively incomplete due to time and technical constraints. Tools like `valgrind` and `clang` (with all warnings and lints flagged on) help in evaluation, but are not always used. We have found this to be a better method than the marker grading the student without any input from them, as it encourages a certain level of independence and creativity in the students, it also encourages students to improve their ability to explain their code. This method also gives the student immediate feedback that they may use on further assignments, rather than hearing back sometimes weeks later, often well into the next assignment.
-
-## Challenges
-
-`TODO: Survey some OS instructors to figure out what challenges they face`
-
-## Finding a Better Place
-
-`TODO: Introduce Rust and briefly mention other alternatives. Perhaps a comparison chart.`
 
 # Introducing Rust
 
@@ -114,7 +113,7 @@ fn example_generic_alt<U>(reader: U) -> u64
     where U: Read {}
 ```
 
-### A Strong Type System
+## A Strong Type System
 
 In some problem areas it is desirable to have a dynamic type system, particularly in higher level code. Implicit, possibly lossy data conversions can often be dangerous in system code. It is common for OS students to accidently take a pointer as a value, or vice versa. It would be desirable to have a stronger type system.
 
@@ -144,7 +143,7 @@ fn main() {
 
 The programmer is not *prevented* from doing these things, Rust only ensures that it is actually the intended action.
 
-### On the Lack of `null`
+## We Don't Need No `null`
 
 Cited by its creator (@billion-dollar) as a 'billion-dollar mistake' `null` is one of the most dangerous thorns in a coder's toolbox. For example, every time a programmer wishes to `malloc` they must change for the pointer to be a `null`, libraries return it often without forewarning. This all happens implictly, the author of the code must keep all of this information in their head. The consequences for making a mistake could be dramatic in lower level code. Segfaults, deadlocks, and system failure are all very real possibilities when exploring complex OS code.
 
@@ -167,7 +166,7 @@ let matched = match maybe_foo {
 let mapped = maybe_foo.map(|x| x as f64);
 ```
 
-### Handling Errors
+## Results and `try!()`
 
 `Result<T, E>` enum exists as either `Ok(T)` or `Err(E)` conveys the result of something which may fail with an error. Overall this type feels like an `Option<T>` as above, and is interacted with in largely the same way except that the `Err(E)` value contains an error type which details information about the error. Using Rust's `match` expression the user can act on various error conditions or success.
 
@@ -216,11 +215,11 @@ fn open_and_read() -> Result<usize, MyError> {
 
 Error handling in Rust is explicit, composable, and sane. There are no exceptions, nulls, 'special numbers' (like -1) or anything that may prevent the programmer from handling the error as *they* choose to, even if that is to simply `.unwrap()` it and crash on failure.
 
-### Borrow and Move Semantics
+## Borrow and Move: Lose the GC
 
-### Traits
+## Traits: Zero-cost Abstractions
 
-Unlike many common languages today Rust does not use a class based or inheritance based system. Data is stored in `struct`s, primitives, or `enum`s which implement a set of traits that define how it interacts and which functions are available to it. To someone familiar with Java or C++, traits may feel like interfaces. For example, the `File` is a `struct` which implements `Read` and `Write` among other traits. Other structures like `TcpStream` and `UdpSocket` also implement the same `Read` and `Write` interface. Traits are zero-cost abstractions that act to encourage common interfaces and capabilities between like-structures.
+Unlike many common languages today Rust does not use a class based or inheritance based system. Data is stored in `struct`s, primitives, or `enum`s which implement a set of traits that define how it interacts and which functions are available to it. To someone familiar with Java or C++, traits may feel like interfaces. For example, the `File` is a `struct` which implements `Read` and `Write` among other traits. Other structures like `TcpStream` and `UdpSocket` also implement the same `Read` and `Write` interface. Traits are zero-cost abstractions that act to encourage common interfaces and capabilities between like-structures. @abstraction
 
 ```rust
 struct Thing {
@@ -243,10 +242,6 @@ impl Foo for Thing {
 
 `TODO: Discuss "safety" and define it clearly, show how Rust accomplishes this.`
 
-## Zero-cost Abstractions
-
-`TODO: Discuss why Rust's abstractions are different than, say, Java's, and why this is appropriate for systems.`
-
 ## Composition over Inheritance
 
 `TODO: Talk about how traits resonate with the UNIX philosophy and why this matters.`
@@ -257,7 +252,6 @@ impl Foo for Thing {
 
 ## Tooling
 
-`TODO: Discuss tooling, testing, and automation.`
 
 # A Comparison with C
 
