@@ -270,7 +270,9 @@ Error handling in Rust is explicit, composable, and sane. There are no exception
 
 Memory management is hard, that's why programmers invented the garbage collector. These days there are tracing GCs, generational GCs, and all sorts of exotic algorithms to sweep up unused memory. This all arises from the archaic assumption that compilers cannot perform enough static analysis to accurately trace the lifetime of a value throughout the execution of a program. For many languages this is quite true, C being one of the primary offenders. In Rust there is the notion of moving, copying, and referencing.
 
-Like C and C++, Rust features a powerful pointer system that allows programmers to make fine-grain, informed decisions about how values are stored, passed, and represented. Rust goes a step further, introducing the distinction between *immutably borrowing* (`&`), *mutably borrowing* (`&mut`), *copying* (`Copy` trait), and *moving* values. This makes it simple for a programmer to observe a function signature and determine which values the function may mutate or consume, and which it may return. Using this information the compiler is able to determine the lifetime constraints of almost any value without additional notations. In (rare, complex) cases where it does require additional information the programmer can annotate lifetimes just as they would with generic types.
+Like C and C++, Rust features a powerful pointer system that allows programmers to make fine-grain, informed decisions about how values are stored, passed, and represented. Rust goes a step further, introducing the distinction between *immutably borrowing* (`&`), *mutably borrowing* (`&mut`), *copying* (`Copy` trait), and *moving* values. At any given time there may be any number of *immutable borrows*, meanwhile there may only be one *mutable borrow*, and a value may not be used in the function once it has been *moved* out.
+
+This makes it simple for a programmer to observe a function signature and determine which values the function may mutate or consume, and which it may return. Using this information the compiler is able to determine the lifetime constraints of almost any value without additional notations. In (rare, complex) cases where it does require additional information the programmer can annotate lifetimes just as they would with generic types.
 
 ```rust
 // `bool` has a `Copy` trait.
@@ -284,8 +286,6 @@ mut_ref = false;
 // Make a copy.
 let other_foo = foo;
 ```
-
-
 
 ## Traits: Zero-cost Abstractions
 
@@ -311,10 +311,6 @@ impl Foo for Thing {
 ## Safety as a First-Class Goal
 
 `TODO: Discuss "safety" and define it clearly, show how Rust accomplishes this.`
-
-## Composition over Inheritance
-
-`TODO: Talk about how traits resonate with the UNIX philosophy and why this matters.`
 
 ## Static Analysis at the Core
 
