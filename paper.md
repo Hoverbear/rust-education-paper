@@ -132,7 +132,7 @@ At the University of Victoria evaluation is typically done through an interactiv
 
 # Introducing Rust
 
-Rust (@rust) is a systems oriented ML-family language supported by Mozilla Research. It was originally developed by Graydon Hoare (TODO: Reference) and reaches it's first stable release on May 15, 2015 (@rust-release).
+Rust (@rust) is a systems oriented ML-family language supported by Mozilla Research. It was originally developed by Graydon Hoare (TODO: Reference) and reached it's first stable release on May 15, 2015 (@rust-release).
 
 Rust offers a robust set of desirable features for systems code:
 
@@ -156,36 +156,36 @@ To someone familiar with C or any of the ML dialects the syntax of Rust will app
 
 ```rust
 fn main() {
-    println!("Hello, world");
+    println!("Hello, world!");
 }
 ```
 
 The only quality of the above code which may be at all suprising to programmers is the `!` at the end of the `println!`. This notifys the programmer **explicitly** that they are using a macro. This is a consistent quality of Rust code throughout the language.
 
-> It is better to be explicit and promote understanding of what is occuring, than to expect the programmer to maintain all of this information in their head.
+> It is better to be explicit and promote understanding of what is occurring, than to expect the programmer to maintain all of this information in their head and engage in guesswork.
 
-This quality does not do away with conciseness, or elegance of code. Community members have developed bindings for well-known tools like Redis (@redis) and found the APIs for equivalent Rust and Python actions of relatively similar "feel", despite the benefits of Rust's type system providing an additional safety net (@redis-api).
+This quality does not do away with conciseness or elegance of code. Community members have developed bindings for well-known tools like Redis (@redis) and found the APIs for equivalent Rust and Python actions of relatively similar "feel", despite the benefits of Rust's type system providing an additional safety net (@redis-api).
 
 Rust does, however, have significant semantic differences compared to C-like languages. For variable declaration, Rust has the `let` keyword which is *immutable by default*, mutability is opt-in via `let mut`. The Rust compiler also enforces best practices, for example, introducing a file-level `const` which is not in all capitals is a compile-time error.(TODO: Check this is still the case)
 
 As well, function definitions differ from C-like languages. This change makes function definitions easier to comprehend when dealing with complex parameters, generics, and return values. Numerous reasoning for why C's declaration syntax is inadequate were well explained by Rob Pike (@go-fn).
 
 ```rust
-fn example_simple() {}
-fn example_params(x: u64, y: &u64, z: &mut u64) {}
-fn example_returns(x: u64) -> u64 {}
-fn example_generic<U: Read>(reader: U) -> u64 {}
+fn example_simple()
+fn example_params(x: u64, y: &u64, z: &mut u64)
+fn example_returns(x: u64) -> u64
+fn example_generic<U: Read>(reader: U) -> u64
 fn example_generic_alt<U>(reader: U) -> u64
-    where U: Read {}
+    where U: Read
 ```
 
 ## A Strong Type System
 
-In some problem areas it is desirable to have a dynamic type system, particularly in higher level code. Implicit, possibly lossy data conversions can often be dangerous in system code. It is common for OS students to accidently take a pointer as a value, or vice versa. It would be desirable to have a stronger type system.
+In some problem areas it is desirable to have a dynamic type system, particularly in higher level code. Implicit, possibly lossy data conversions can often be dangerous in system code. It is common for OS students to accidently take a pointer as a value, or vice versa. It would be desirable for them to have a stronger type system which informs them of this situation.
 
 For example, in C:
 
-```c
+```cpp
 void main() {
     float foo = 1.1;
     // Lossy conversion.
@@ -211,11 +211,11 @@ The programmer is not *prevented* from doing these things, Rust only ensures tha
 
 ## We Don't Need No `null`
 
-Cited by its creator (@billion-dollar) as a 'billion-dollar mistake' `null` is one of the most dangerous thorns in a coder's toolbox. For example, every time a programmer wishes to `malloc` they must change for the pointer to be a `null`, libraries return it often without forewarning. This all happens implictly, the author of the code must keep all of this information in their head. The consequences for making a mistake could be dramatic in lower level code. Segfaults, deadlocks, and system failure are all very real possibilities when exploring complex OS code.
+Cited by its creator (@billion-dollar) as a 'billion-dollar mistake' `null` is one of the most dangerous thorns in a coder's toolbox. For example, every time a programmer wishes to `malloc` they must change for the pointer to be a `null`, libraries return it often without forewarning, and it can appear in hard to debug situations during data races. This all happens implicitly, the author of the code must keep all of the information about the system in their head. The consequences for making a mistake could be dramatic in lower level code. Segfaults, deadlocks, and system failure are all very real possibilities when exploring complex OS code. What's more is that all of these errors happen at *runtime* and may take down live systems, causing financial loss, destruction of property, or even loss of life.
 
 Many functional languages like Haskell and F# have the concept of an `Option`, a concept that Rust shares. Instead of needing to be aware of and check for `null` at every occurance, the language semantics require the programmer to explicitly decide on the control flow for all values. It is common for newcomers to the language to dislike the "noise" this brings to the code, but once they understand the benefits of this design choice, and the ways to work with it, these complaints tend fade.
 
-In Rust the `Option<T>` enum exists as either a `Some(T)` or a `None`. Rust provides a number of techniques for working with this type. First, is the simple "just crash if it doesn't work" call `.unwrap()`, then there is `.unwrap_or(some_default)`. As well there are functions like `.is_some()` and `.is_none()` which function as expected. It's also possible work work with an optional value without unwrapping it. It is very common to utilize Rust's `match` expression to handle control flow and unwrap enumerated values.
+In Rust the `Option<T>` enum exists as either a `Some(T)` or a `None` (the equivalent of a `null`). Rust provides a number of techniques for working with this type. First, is the simple "just crash if it doesn't work" call `.unwrap()`, then there is `.unwrap_or(some_default)`. As well there are functions like `.is_some()` and `.is_none()` which function as expected. It's also possible work work with an optional value without unwrapping it via `.map()`. It is very common to utilize Rust's `match` expression to handle control flow and unwrap enumerated values.
 
 ```rust
 // Create a `Some(T)` and a None.
@@ -234,7 +234,7 @@ let mapped = maybe_foo.map(|x| x as f64);
 
 ## Results and `try!()`
 
-`Result<T, E>` enum exists as either `Ok(T)` or `Err(E)` conveys the result of something which may fail with an error. Overall this type feels like an `Option<T>` as above, and is interacted with in largely the same way except that the `Err(E)` value contains an error type which details information about the error. Using Rust's `match` expression the user can act on various error conditions or success.
+The `Result<T, E>` enum exists as either `Ok(T)` or `Err(E)` conveys the result of something which may fail with an error. Overall this type feels like an `Option<T>` as above, and is interacted with in largely the same way except that the `Err(E)` variant contains an error type which details information about the error. Using Rust's `match` expression the user can act on various error conditions or success.
 
 ```rust
 use std::io;
@@ -253,7 +253,7 @@ let val_or_desc = match success {
 };
 ```
 
-It is a compiler warning to perform an action such as `file.read_to_string()` which returns a `Result<usize, Error>` and to not handle the error in some way. In Rust is it idiomatic for any recoverable error to be passed up the call stack to where it is sensibly handled. In approaching this idea newcomers typically struggle with the fact that an `io::Error` and a `Utf8Error` are different types. This is typically solved by creating a new `Error` which is an enumeration over the possible underlaying errors. Then there are the `Into<T>` and `From<T>` traits which can be implemented to provide seamless interaction.
+It is a compiler warning to perform an action such as `file.read_to_string()` which returns a `Result<usize, Error>` and to not handle the error in some way. In Rust is it idiomatic for any recoverable error to be passed up the call stack to where it can be sensibly handled. While approaching this idea newcomers typically struggle with the fact that an `io::Error` and a `Utf8Error` are different types and cannot be returned in the same `Result<T,E>`, since the `E` value would differ and violate Rust's strong typing. This is typically solved by creating a new `Error` which is an enumeration over the possible underlaying errors as well as any the programmer may wish to include themselves. Then there are the `Into<T>` and `From<T>` traits which can be implemented to provide seamless interaction.
 
 ```rust
 pub enum MyError {
@@ -283,23 +283,32 @@ Error handling in Rust is explicit, composable, and sane. There are no exception
 
 ## Borrow and Move: Lose the GC
 
-Memory management is hard, that's why programmers invented the garbage collector. These days there are tracing GCs, generational GCs, and all sorts of exotic algorithms to sweep up unused memory. This all arises from the archaic assumption that compilers cannot perform enough static analysis to accurately trace the lifetime of a value throughout the execution of a program. For many languages this is quite true, C being one of the primary offenders. In Rust there is the notion of moving, copying, and referencing.
+Memory management is hard, that's why programmers invented the garbage collector. These days there are tracing GCs, generational GCs, and all sorts of exotic algorithms to sweep up unused memory. This all arises from the assumption that compilers cannot perform enough static analysis to accurately trace the lifetime of a value throughout the execution of a program. For many languages this is quite true, C being one of the primary offenders. In Rust there is the notion of moving, copying, and referencing.
 
 Like C and C++, Rust features a powerful pointer system that allows programmers to make fine-grain, informed decisions about how values are stored, passed, and represented. Rust goes a step further, introducing the distinction between *immutably borrowing* (`&`), *mutably borrowing* (`&mut`), *copying* (`Copy` trait), and *moving* values. At any given time there may be any number of *immutable borrows*, meanwhile there may only be one *mutable borrow*, and a value may not be used in the function once it has been *moved* out.
 
 This makes it simple for a programmer to observe a function signature and determine which values the function may mutate or consume, and which it may return. Using this information the compiler is able to determine the lifetime constraints of almost any value without additional notations. In (rare, complex) cases where it does require additional information the programmer can annotate lifetimes just as they would with generic types.
 
 ```rust
-// `bool` has a `Copy` trait.
-let foo = true;
-// Immutable reference.
-let ref_of_foo = &foo;
-ref_of_foo = false; // Error
-// Mutable reference.
-let mut_ref = &mut foo;
-mut_ref = false;
-// Make a copy.
-let other_foo = foo;
+fn main() {
+    // An owned, growable,
+    // non-copyable string.
+    let foo = String::from("foo");
+
+    // Introduce a new scope.
+    {
+        // Reference bar is created.
+        let bar = &foo;
+        // Error, bar is immutable.
+        bar.push('c');
+    } // bar is destroyed.
+
+    // Error, bar does not exist.
+    let baz = bar;
+    // Works, reference mutable.
+    let rad = &mut foo;
+    rad.push('c');
+} // foo is destroyed.
 ```
 
 ## Traits: Zero-cost Abstractions
