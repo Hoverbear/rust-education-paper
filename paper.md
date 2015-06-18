@@ -326,10 +326,15 @@ As a result of the static analysis done by `rustc` it is able to infer informati
 * Lossy casts.
 * Unclear lifetimes (asking for either clarity or refactoring.)
 
-
 ## Safety as a First-Class Goal
 
-`TODO: Discuss "safety" and define it clearly, show how Rust accomplishes this.`
+The concept of "Safety" in code is often poorly defined. In general, safety can be broken down into three categories:
+
+* **Type Safety** is the ability of a language to prevent or discourage type errors, such as treating a `float` like an `int`. Rust and languages like Haskell excel here as their type systems are strong, explicit (but often inferred), and do not include the notion of a `null` that can go anywhere indiscriminately.
+* **Memory Safety** is the ability of a language to reduce or eliminate the possibility of mistakes like writing a 64 bit value into a 32 bit space (overwriting unintended data), or multi-threaded mutable access to the same memory. Rust's borrow checker effectively eliminates data races in safe code.
+* **Thread Safety** is the ability of a language to prevent inter-thread race conditions, such as one thread exiting when another thread is waiting on data from it. Rust provides some robust tools for managing thread pools integrated into it's type system, however some mistakes are still possible if the programmer works hard enough to accomplish them.
+
+Rust advertises both type safety and data safety, accomplishing both very effectively. There is still research and development to be done before it can truthfully bill itself as thread-safe, but this type of safety is perhaps the most elusive.
 
 ## Tooling
 
