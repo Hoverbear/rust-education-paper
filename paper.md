@@ -308,13 +308,28 @@ impl Foo for Thing {
 }
 ```
 
+## Static Analysis at the Core
+
+Static analysis tools, like `splint` for C (CITEME) are an invaluable tool for Operating Systems programming, particularly when working on large codebases with multiple programmers. These tools accomplish in-depth analysis of source code and attempt to derive information from the code to understand where potential mistakes or errors may occur. For languages like C they all have one big problem: C wasn't designed for static analysis.
+
+Rust's type system and region based memory, based off the ideas of Cyclone (CITEME), are particularly well suited to static analysis. Indeed, `rustc` itself performs a tremendous amount of static analysis even without the help of external tools. The type system carries all the information necessary for the compiler to understand all possible control flows of the program, all possible (recoverable) errors which arise, and the lifetimes of each region of memory.
+
+Of particular interest is `rustc`'s "Borrow Checker" which analyzes and understands the pointer system (detailed above) and is able to verify data safety, even across multiple threads. The borrow checker is an area of active research (CITEME) and has thus far proven itself sound.
+
+As a result of the static analysis done by `rustc` it is able to infer information about (but not limited to):
+
+* Unused variables and functions.
+* Unreachable code.
+* Unsafe pointer sharing (multiple mutable pointers.)
+* Unused `Result`s.
+* Incorrect type matching.
+* Lossy casts.
+* Unclear lifetimes (asking for either clarity or refactoring.)
+
+
 ## Safety as a First-Class Goal
 
 `TODO: Discuss "safety" and define it clearly, show how Rust accomplishes this.`
-
-## Static Analysis at the Core
-
-`TODO: Discuss the power of static analysis.`
 
 ## Tooling
 
