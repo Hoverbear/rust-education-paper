@@ -105,6 +105,21 @@ references:
     title: zinc.rs
     type: webpage
     URL: http://zinc.rs/
+  - id: splint
+    title: Splint
+    type: webpage
+    URL: http://splint.org/
+  - id: region-cyclone
+    title: "Region-Based Memory Management in Cyclone"
+    type: webpage
+    authors:
+      - family: Grossman
+      - family: Morrisett
+      - family: Jim
+      - family: Hicks
+      - family: Wang
+      - family: Cheney
+    URL: http://209.68.42.137/ucsd-pages/Courses/cse227.w03/handouts/cyclone-regions.pdf
 ---
 
 # The State of the OS Course
@@ -310,9 +325,9 @@ impl Foo for Thing {
 
 ## Static Analysis at the Core
 
-Static analysis tools, like `splint` for C (CITEME) are an invaluable tool for Operating Systems programming, particularly when working on large codebases with multiple programmers. These tools accomplish in-depth analysis of source code and attempt to derive information from the code to understand where potential mistakes or errors may occur. For languages like C they all have one big problem: C wasn't designed for static analysis.
+Static analysis tools, like `splint` for C (@splint) are an invaluable tool for Operating Systems programming, particularly when working on large codebases with multiple programmers. These tools accomplish in-depth analysis of source code and attempt to derive information from the code to understand where potential mistakes or errors may occur. For languages like C they all have one big problem: C wasn't designed for static analysis.
 
-Rust's type system and region based memory, based off the ideas of Cyclone (CITEME), are particularly well suited to static analysis. Indeed, `rustc` itself performs a tremendous amount of static analysis even without the help of external tools. The type system carries all the information necessary for the compiler to understand all possible control flows of the program, all possible (recoverable) errors which arise, and the lifetimes of each region of memory.
+Rust's type system and region based memory, based off the ideas of Cyclone (@region-cyclone), are particularly well suited to static analysis. Indeed, `rustc` itself performs a tremendous amount of static analysis even without the help of external tools. The type system carries all the information necessary for the compiler to understand all possible control flows of the program, all possible (recoverable) errors which arise, and the lifetimes of each region of memory.
 
 Of particular interest is `rustc`'s "Borrow Checker" which analyzes and understands the pointer system (detailed above) and is able to verify data safety, even across multiple threads. The borrow checker is an area of active research (CITEME) and has thus far proven itself sound.
 
