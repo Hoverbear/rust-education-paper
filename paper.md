@@ -165,7 +165,7 @@ fn main() {
 }
 ```
 
-The only quality of the above code which may be at all suprising to programmers is the `!` at the end of the `println!()`. This notifys the programmer **explicitly** that they are using a macro. This is a consistent quality of Rust code throughout the language.
+The only quality of the above code which may be at all suprising to programmers is the `!` at the end of the `println!()`. This notifies the programmer **explicitly** that they are using a macro. This is a consistent quality of Rust code throughout the language.
 
 > It is better to be explicit and promote understanding of what is occurring, than to expect the programmer to maintain all of this information in their head and engage in guesswork.
 
@@ -186,7 +186,7 @@ fn example_generic_alt<U>(reader: U) -> u64
 
 ## A Strong Type System
 
-In some problem areas it is desirable to have a dynamic type system, particularly in higher level code. Implicit, possibly lossy data conversions can often be dangerous in system code. It is common for OS students to accidently take a pointer as a value, or vice versa. It would be desirable for them to have a stronger type system which informs them of this situation.
+In some problem areas it is desirable to have a dynamic type system, particularly in higher level code. Implicit, possibly lossy data conversions can often be dangerous in system code. It is common for OS students to accidentally take a pointer as a value, or vice versa. It would be desirable for them to have a stronger type system which informs them of this situation.
 
 For example, in C:
 
@@ -407,7 +407,7 @@ Best of all, there is active operating system development in Rust. There is a pr
 
 # A Comparison with C
 
-`TODO: A few examples where C falls apart and the equivilent Rust code works, or gives a compiler error.`
+`TODO: A few examples where C falls apart and the equivalent Rust code works, or gives a compiler error.`
 
 # Tackling Common Problems
 
