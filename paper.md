@@ -5,7 +5,7 @@ author:
   - Yvonne Coady
 tags: [Education, Rust, Operating Systems]
 abstract: |
-  We discuss the merits of instructing operating systems courses using the modern systems programming language Rust. (TODO: Longer, better, stronger, faster)
+  We discuss the merits of instructing operating systems courses using the modern systems programming language Rust from the point of view of the student, educator, and evaluator.
 references:
   - id: rust
     title: Rust
@@ -125,6 +125,28 @@ references:
     type: webpage
     author: The Rust Core Team
     URL: http://blog.rust-lang.org/2015/05/15/Rust-1.0.html
+  - id: dining-phil
+    title: Dining Philosphers in Rust
+    type: webpage
+    URL: https://doc.rust-lang.org/book/dining-philosophers.html
+  - id: dining-rust
+    title: Dining Philosophers in Rust
+    type: webpage
+    author:
+      - family: Klabnik
+        given: Steve
+    URL: https://github.com/steveklabnik/dining_philosophers
+  - id: dining-c
+    title: Dining Philosophers in C
+    type: webpage
+    URL: http://rosettacode.org/wiki/Dining_philosophers#C
+  - id: fearless-concurrency
+    title: Fearless Concurrency
+    type: webpage
+    author:
+      - given: Aaron
+        family: Turon
+    URL: http://blog.rust-lang.org/2015/04/10/Fearless-Concurrency.html
 ---
 
 # The State of the OS Course
@@ -137,7 +159,7 @@ At the University of Victoria evaluation is typically done through an interactiv
 
 # Introducing Rust
 
-Rust (@rust) is a systems oriented ML-family language supported by Mozilla Research. It was originally developed by Graydon Hoare (TODO: Reference) and reached it's first stable release on May 15, 2015 (@rust-release).
+Rust (@rust) is a systems oriented ML-family language supported by Mozilla Research. It was originally developed by Graydon Hoare and reached it's first stable release on May 15, 2015 (@rust-release).
 
 Rust offers a robust set of desirable features for systems code:
 
@@ -171,7 +193,9 @@ The only quality of the above code which may be at all suprising to programmers 
 
 This quality does not do away with conciseness or elegance of code. Community members have developed bindings for well-known tools like Redis (@redis) and found the APIs for equivalent Rust and Python actions of relatively similar "feel", despite the benefits of Rust's type system providing an additional safety net (@redis-api).
 
-Rust does, however, have significant semantic differences compared to C-like languages. For variable declaration, Rust has the `let` keyword which is *immutable by default*, mutability is opt-in via `let mut`. The Rust compiler also enforces best practices, for example, introducing a file-level `const` which is not in all capitals is a compile-time error.(TODO: Check this is still the case)
+Rust does, however, have significant semantic differences compared to C-like languages. For variable declaration, Rust has the `let` keyword which is *immutable by default*, mutability is opt-in via `let mut`. This opt-in mutability was found by the community to encourage better code. Instead of the programmer needing to remember to use `const` the compiler patiently informs them of any variables they might have forgotten to make mutable, and encourages them to evaluate if the variable does indeed need to be mutable.
+
+The Rust compiler also enforces best practices, for example, introducing a file-level `const` which is not in all capitals is a compile-time error. It will also notify the programmer when there is unreachable code, unused assignments, and unused imports.
 
 As well, function definitions differ from C-like languages. This change makes function definitions easier to comprehend when dealing with complex parameters, generics, and return values. Numerous reasoning for why C's declaration syntax is inadequate were well explained by Rob Pike (@go-fn).
 
@@ -184,7 +208,7 @@ fn example_generic_alt<U>(reader: U) -> u64
     where U: Read
 ```
 
-## A Strong Type System
+# A Strong Type System
 
 In some problem areas it is desirable to have a dynamic type system, particularly in higher level code. Implicit, possibly lossy data conversions can often be dangerous in system code. It is common for OS students to accidentally take a pointer as a value, or vice versa. It would be desirable for them to have a stronger type system which informs them of this situation.
 
@@ -196,7 +220,7 @@ void main() {
     // Lossy conversion.
     int bar = foo;  // No error.
     // Possibly unintended conversion.
-    int baz = &foo; // Compile-time Warning.
+    int baz = &foo; // Compile-time warning.
 }
 ```
 
@@ -205,16 +229,16 @@ Conversely, in Rust explicit conversions are required:
 ```rust
 fn main() {
     let foo = 1.1;
-    // Lossy converstion.
+    // Lossy conversation.
     let bar = foo as u64;
     // Potentially unintended conversion.
     let baz = &foo as u64; // Compile-time error.
 }
 ```
 
-The programmer is not *prevented* from doing these things, Rust only ensures that it is actually the intended action.
+The programmer is not *prevented* from doing these things, Rust only ensures that it is actually the intended action. The correct way to get the address of a value (and store it as a separate value) in Rust is `&foo as *const _ as usize;`.
 
-## We Don't Need No `null`
+# We Don't Need No `null`
 
 Cited by its creator (@billion-dollar) as a 'billion-dollar mistake' `null` is one of the most dangerous thorns in a coder's toolbox. For example, every time a programmer wishes to `malloc` they must change for the pointer to be a `null`, libraries return it often without forewarning, and it can appear in hard to debug situations during data races. This all happens implicitly, the author of the code must keep all of the information about the system in their head. The consequences for making a mistake could be dramatic in lower level code. Segfaults, deadlocks, and system failure are all very real possibilities when exploring complex OS code. What's more is that all of these errors happen at *runtime* and may take down live systems, causing financial loss, destruction of property, or even loss of life.
 
@@ -237,7 +261,7 @@ let matched = match maybe_foo {
 let mapped = maybe_foo.map(|x| x as f64);
 ```
 
-## Results and `try!()`
+# Results and `try!()`
 
 The `Result<T, E>` enum exists as either `Ok(T)` or `Err(E)` conveys the result of something which may fail with an error. Overall this type feels like an `Option<T>` as above, and is interacted with in largely the same way except that the `Err(E)` variant contains an error type which details information about the error. Using Rust's `match` expression the user can act on various error conditions or success.
 
@@ -286,7 +310,7 @@ fn open_and_read() -> Result<usize, MyError> {
 
 Error handling in Rust is explicit, composable, and sane. There are no exceptions, nulls, 'special numbers' (like -1) or anything that may prevent the programmer from handling the error as *they* choose to, even if that is to simply `.unwrap()` it and crash on failure.
 
-## Borrow and Move: Lose the GC
+# Borrow and Move: Lose the GC
 
 Memory management is hard, that's why programmers invented the garbage collector. These days there are mark-and-sweep GCs, tracing GCs, generational GCs, and all sorts of exotic algorithms to sweep up unused memory. This all arises from the assumption that compilers cannot perform enough static analysis to accurately trace the lifetime of a value throughout the execution of a program. For many languages this is quite true, C being one of the primary offenders. In Rust there is the notion of moving, copying, and referencing.
 
@@ -316,7 +340,7 @@ fn main() {
 } // foo is destroyed.
 ```
 
-## Traits: Zero-cost Abstractions
+# Traits: Zero-cost Abstractions
 
 Unlike many common languages today Rust does not use a class based or inheritance based system. Data is stored in `struct`s, primitives, or `enum`s which implement a set of traits that define how it interacts and which functions are available to it. To someone familiar with Java or C++, traits may feel like interfaces. For example, the `File` is a `struct` which implements `Read` and `Write` among other traits. Other structures like `TcpStream` and `UdpSocket` also implement the same `Read` and `Write` interface. Traits are zero-cost abstractions that act to encourage common interfaces and capabilities between like-structures. (@abstraction)
 
@@ -337,7 +361,7 @@ impl Foo for Thing {
 }
 ```
 
-## Static Analysis at the Core
+# Static Analysis at the Core
 
 Static analysis tools, like `splint` for C (@splint) are an invaluable tool for Operating Systems programming, particularly when working on large codebases with multiple programmers. These tools accomplish in-depth analysis of source code and attempt to derive information from the code to understand where potential mistakes or errors may have occurred. For languages like C they all have one big problem:
 
@@ -357,7 +381,54 @@ As a result of the static analysis done by `rustc` it is able to infer informati
 * Lossy casts.
 * Unclear lifetimes (asking for either clarity or refactoring.)
 
-## Safety as a First-Class Goal
+# Threads that don't Bite
+
+Threading is perhaps one of the most powerful and robust features of Rust. The characteristics detailed above culminate in a sort of *tour de force* when used bravely in a threaded context.
+
+Harnessing the power of ownership semantics, the type system, the standard library's threading modules there are a number of benefits (@fearless-concurrency):
+
+**Channels** provide a way to transfer messages (and ownership) between threads without fear of there being later (unsafe) access to the data by other threads. The vanilla channel provided by the standard library is a Multiple-Producer, Single-Consumer channel.
+
+```rust
+use std::sync::mpsc::{channel, Sender, Receiver};
+let (send, recieve) = channel();
+```
+
+**Locks** can encapsulate data such that it can only be accessed if the lock is held. In Rust, you don't lock code, you lock data, and it's safer because of it. Locks are typically represented by `Mutex`s and shared between threads with an Atomically Reference Counted structure (`Arc`).
+
+```rust
+use std::sync::{Arc, Mutex};
+let data = Arc::new(Mutex::new(0));
+```
+
+**Traits** like `Sync` and `Send` are implemented on types and symbolize if it can be *sent* or *shared* between threads safely. These traits are not just documentation, they are intrinsic to the language.
+
+```rust
+// Safe to share between threads.
+use std::marker::Sync;
+// Safe to transfer between threads.
+use std::marker::Send;
+```
+
+Other, more fearless forms of concurrency such as **sharing stack frames** is even encouraged by these models. This is done via a scoped thread model, and is currently considered unstable (requiring a `feature` flag) by Rust because the programmer is able to leak memory if the `JoinGuard` is treated incorrectly.
+
+```rust
+#![feature(scoped)]
+use std::thread;
+
+fn main() {
+    let items = vec![1, 2, 3];
+    let mut guards = vec![];
+    for item in items {
+        let guard = thread::scoped(move || {
+            print!("{}", item);
+        });
+        guards.push(guard);
+    }
+} // `guards` destroyed here, implicitly joining
+```
+
+# Safety as a First-Class Goal
 
 The concept of "Safety" in code is often poorly defined. In general, safety can be broken down into three categories:
 
@@ -367,7 +438,7 @@ The concept of "Safety" in code is often poorly defined. In general, safety can 
 
 Rust advertises both type safety and data safety, accomplishing both very effectively. There is still research and development to be done before it can truthfully bill itself as thread-safe, but this type of safety is perhaps the most elusive.
 
-## Tooling
+# Tooling
 
 One significant advantage of using Rust over its alternatives is its robust, opinionated set of tooling. The Rust standard distribution includes `rustc` (the compiler), `cargo` (a package manager and build tool), and `rustdoc` (a documentation generator). Currently there is work being done on a `rustfmt` which would function the same as Go's venerable `gofmt`.
 
@@ -391,8 +462,7 @@ Having a standardized, high quality documentation format is invaluable for progr
 
 # Research
 
-Rust is born of strong research. It is strongly founded on a set of well reasoned, influential [papers](https://doc.rust-lang.org/nightly/book/academic-research.html
-) (@rust-research). The language was originally developed by Graydon Hoare and is MIT licensed. There has been over 1017 contributors to the project, including significant contributions by Mozilla Research, Samsung Research, and Tilde.
+Rust is born of strong research. It is strongly founded on a set of well reasoned, influential [papers](https://doc.rust-lang.org/nightly/book/academic-research.html) (@rust-research). The language was originally developed by Graydon Hoare and is MIT licensed. There has been over 1017 contributors to the project, including significant contributions by Mozilla Research, Samsung Research, and Tilde.
 
 There are active researchers working on Rust and the language is rolling forward on a 6 week schedule, but all code compatible with current versions of Rust will be compatible with Rust until version 2.0 (@compatability). This schedule is the same as Mozilla's highly successful Firefox model (@release-schedule) and follows the semantic version scheme (@semantic-versioning). This makes the language a target for active feature and fix development, since it releases often, while keeping it stable for industrial use.
 
@@ -400,18 +470,79 @@ There are active researchers working on Rust and the language is rolling forward
 
 One of the biggest dangers in choosing a language that "Is not C" to teach operating systems in is that it can be very difficult for students to get help. There is very little operating systems development in languages like Python, C#, or Java and what does exist is often rather exotic, especially compared to the extremely well documented C problems that crop up.
 
-Mozilla's IRC network hosts the popular #rust channel which regularly has over 800 members at any given time. [`crates.io`](http://crates.io/) hosts over 2300 'crates', Rust's nickname for a package. The language reached 1.0 on May 15, 2015 (@rust-release) and has been in development since 2006. The community is active and friendly with special interest groups hosting their own channels for various purposes. There are a number of active article feeds and active discussion on [Stack Overflow](https://stackoverflow.com/questions/tagged/rust
-). (@rust-stackoverflow)
+Mozilla's IRC network hosts the popular #rust channel which regularly has over 800 members at any given time. [`crates.io`](http://crates.io/) hosts over 2300 'crates', Rust's nickname for a package. The language reached 1.0 on May 15, 2015 (@rust-release) and has been in development since 2006. The community is active and friendly with special interest groups hosting their own channels for various purposes. There are a number of active article feeds and active discussion on [Stack Overflow](https://stackoverflow.com/questions/tagged/rust). (@rust-stackoverflow)
 
 Best of all, there is active operating system development in Rust. There is a project to develop `coreutils` (@coreutils), a kernel (@rust-boot), and embedded system platforms (@zinc). At the time of writing, these projects are young enough that students could even contribute components upstream.
 
-# A Comparison with C
+# Example Problem: Dining Philosophers
 
-`TODO: A few examples where C falls apart and the equivalent Rust code works, or gives a compiler error.`
+The "Dining Philosophers" problem is a fantastic problem for operating systems education as it teaches about concurrency and mutexes so well, a simple implementation of the problem will deadlock. A comparison between solutions in [C](http://rosettacode.org/wiki/Dining_philosophers#C) (@dining-c) and [Rust](https://github.com/steveklabnik/dining_philosophers/blob/master/src/main.rs) (@dining-rust) is below.
 
-# Tackling Common Problems
+In Rust the table can be represented like so:
 
-`TODO: Show a few solutions to problems like Dining Philosophers and do a qualitative evaluation of the differences in what they teach.`
+```rust
+let table = Arc::new(Table { forks: vec![
+    Mutex::new(true),
+    // ...
+]});
+```
+
+In C:
+
+```cpp
+pthread_mutex_t forks[N];
+// ..
+for (i=0;i<5; i++) {
+    failed = pthread_mutex_init(&forks[i], NULL);
+    // ...
+}
+```
+
+This uses an *atomically reference counted*, typed structure containing a vector of boolean mutexes. Being an `Arc<T>` lets the data be safely shared between threads and destroyed when there are no remaining references. The equivalent C code uses a similar concept with a global variable. In C declaration happens at a different point then instantiation, unlike Rust which prevents the chance of using uninitialized variables.
+
+The representation of a philosopher does not differ tremendously in semantics, but considerably in representation. Instead of the `Philosopher` containing a reference to a thread, or carrying pointer data as it does in C, the Rust representation makes use of the `mpsc::Sender` which is the Producer side of a Multiple-producer/Single-Consumer type. This is a more thread safe representation and better demonstration of best practices.
+
+```rust
+struct Philosopher {
+    name: String,
+    done: Sender<bool>,
+    left: usize,
+    right: usize,
+}
+```
+
+```cp
+typedef struct philData {
+    pthread_mutex_t *fork_lft, *fork_rgt;
+    const char *name;
+    pthread_t thread;
+    int   fail;
+} Philosopher;
+```
+
+The Rust version also includes a very simple, understandable `main()` which communicates the problem clearly.
+
+```rust
+// Spawn threads, create handles.
+let handles: Vec<_> = philosophers.into_iter()
+.map(|p| {
+    let table = table.clone();
+
+    thread::spawn(move || {
+        p.eat(&table);
+    })
+}).collect();
+// Wait for `done` messages.
+for _ in 0..5 {
+    done_rx.recv().unwrap();
+}
+// Join all threads.
+for h in handles {
+    h.join().ok().expect("Couldn't join a thread.");
+}
+```
+
+In the Rust guides there is an entire article devoted to the [Dining Philosophers](https://doc.rust-lang.org/book/dining-philosophers.html) (@dining-phil) which throughly covers the topic and could be of great use to future instructors seeking to teach the concept.
 
 # Future Work
 
