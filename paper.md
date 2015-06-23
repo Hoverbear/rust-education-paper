@@ -147,6 +147,21 @@ references:
       - given: Aaron
         family: Turon
     URL: http://blog.rust-lang.org/2015/04/10/Fearless-Concurrency.html
+  - id: reenix
+    title: "Reenix: Implementing a Unix-Like Operating System in Rust"
+    type: webpage
+    author:
+      - given: Alex
+        family: Light
+    URL: https://scialex.github.io/reenix.pdf
+  - id: patina
+    title: "Patina: A Formalization of the Rust Programming Language"
+    type: webpage
+    author:
+      - given: Eric
+        family: Reed
+    URL: ftp://ftp.cs.washington.edu/tr/2015/03/UW-CSE-15-03-02.pdf
+
 ---
 
 # The State of the OS Course
@@ -369,7 +384,7 @@ Static analysis tools, like `splint` for C (@splint) are an invaluable tool for 
 
 Rust's type system and region based memory, based off the ideas of Cyclone (@region-cyclone), are particularly well suited to static analysis. Indeed, `rustc` itself performs a tremendous amount of static analysis without the help of external tools. The type system carries all the information necessary for the compiler to understand all possible control flows of the program, all possible (recoverable) errors which arise, and the lifetimes of each region of memory.
 
-Of particular interest is `rustc`'s "Borrow Checker" which analyzes and understands the pointer system (detailed above) and is able to verify data safety, even across multiple threads. The borrow checker is an area of active research (CITEME) and has thus far proven itself sound.
+Of particular interest is `rustc`'s "Borrow Checker" which analyzes and understands the pointer system (detailed above) and is able to verify data safety, even across multiple threads. The borrow checker is an area of active research (@patina) and has thus far proven itself sound.
 
 As a result of the static analysis done by `rustc` it is able to infer information about (but not limited to):
 
@@ -472,7 +487,7 @@ One of the biggest dangers in choosing a language that "Is not C" to teach opera
 
 Mozilla's IRC network hosts the popular #rust channel which regularly has over 800 members at any given time. [`crates.io`](http://crates.io/) hosts over 2300 'crates', Rust's nickname for a package. The language reached 1.0 on May 15, 2015 (@rust-release) and has been in development since 2006. The community is active and friendly with special interest groups hosting their own channels for various purposes. There are a number of active article feeds and active discussion on [Stack Overflow](https://stackoverflow.com/questions/tagged/rust). (@rust-stackoverflow)
 
-Best of all, there is active operating system development in Rust. There is a project to develop `coreutils` (@coreutils), a kernel (@rust-boot), and embedded system platforms (@zinc). At the time of writing, these projects are young enough that students could even contribute components upstream.
+Best of all, there is active operating system development in Rust. There is a project to develop `coreutils` (@coreutils), a kernel (@rust-boot), operating systems (@reenix), and embedded system platforms (@zinc). At the time of writing, these projects are young enough that students could even contribute components upstream.
 
 # Example Problem: Dining Philosophers
 
