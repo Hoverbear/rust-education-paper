@@ -162,7 +162,7 @@ references:
         family: Reed
     URL: ftp://ftp.cs.washington.edu/tr/2015/03/UW-CSE-15-03-02.pdf
   - id: deviant
-    title:
+    title: Bugs as Deviant Behavior: A General Approach to Inferring Errors in Systems Code
     type: webpage
     authors:
       - given: Dawson
@@ -176,6 +176,14 @@ references:
       - given: Benjamin
         family: Chelf
     URL: https://web.stanford.edu/~engler/deviant-sosp-01.pdf
+  - id: coverity
+    title: Coverity
+    type: webpage
+    URL: https://www.coverity.com/
+  - id: pvs-studio
+    title: PVS-Studio
+    type: webpage
+    URL: http://www.viva64.com/en/pvs-studio/
 ---
 
 # The State of the OS Course
@@ -290,7 +298,7 @@ enum Three {
 
 Cited by its creator (@billion-dollar) as a 'billion-dollar mistake' `null` is one of the most dangerous thorns in a coder's toolbox. For example, every time a programmer wishes to `malloc` they must check for the pointer to be a `null`, libraries return it often without forewarning, and it can appear in hard to debug situations during data races. This all happens implicitly, the author of the code must keep all of the information about the system in their head. The consequences for making a mistake could be dramatic in lower level code. Segfaults, deadlocks, and system failure are all very real possibilities when exploring complex OS code. What's more is that all of these errors happen at *runtime* and may take down live systems, causing financial loss, destruction of property, or even loss of life.
 
-In languages like C, C++, and Java a tremendous amount of research has gone into developing products like Coverity (CITEME from Yvonne's mail) and PVS-Studio (CITEME) to help discover possible null pointer consistencys. Engler et al (@deviant) suggest heuristic methods are used to determine the 'null state' of a variable throughout the control flow of a program. What if programmers could just stop worrying about `null` all together?
+In languages like C, C++, and Java a tremendous amount of research has gone into developing products like Coverity (@coverity) and PVS-Studio (@pvs-studio) to help discover possible null pointer consistencys. Engler et al (@deviant) suggest heuristic methods are used to determine the 'null state' of a variable throughout the control flow of a program. What if programmers could just stop worrying about `null` all together?
 
 Many functional languages like Haskell and F# have the concept of an `Option`, a concept that Rust shares. Instead of needing to be aware of and check for `null` at every occurrence, the language semantics require the programmer to explicitly decide on the control flow for all values. It is common for newcomers to the language to dislike the "noise" this brings to the code, but once they understand the benefits of this design choice, and the ways to work with it, these complaints tend fade.
 
@@ -567,7 +575,7 @@ struct Philosopher {
 }
 ```
 
-```cp
+```cpp
 typedef struct philData {
     pthread_mutex_t *fork_lft, *fork_rgt;
     const char *name;
