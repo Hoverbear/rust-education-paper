@@ -161,7 +161,21 @@ references:
       - given: Eric
         family: Reed
     URL: ftp://ftp.cs.washington.edu/tr/2015/03/UW-CSE-15-03-02.pdf
-
+  - id: deviant
+    title:
+    type: webpage
+    authors:
+      - given: Dawson
+        family: Engler
+      - given: David
+        family: Chen
+      - given: Seth
+        family: Hallem
+      - given: Andy
+        family: Chou
+      - given: Benjamin
+        family: Chelf
+    URL: https://web.stanford.edu/~engler/deviant-sosp-01.pdf
 ---
 
 # The State of the OS Course
@@ -174,7 +188,7 @@ At the University of Victoria evaluation is typically done through an interactiv
 
 # Introducing Rust
 
-Rust (@rust) is a systems oriented ML-family language supported by Mozilla Research. It was originally developed by Graydon Hoare and reached it's first stable release on May 15, 2015 (@rust-release).
+Rust (@rust) is a systems oriented ML-family language supported by Mozilla Research. It was originally conceived by Graydon Hoare and reached it's first stable release on May 15, 2015 (@rust-release).
 
 Rust offers a robust set of desirable features for systems code:
 
@@ -253,9 +267,30 @@ fn main() {
 
 The programmer is not *prevented* from doing these things, Rust only ensures that it is actually the intended action. The correct way to get the address of a value (and store it as a separate value) in Rust is `&foo as *const _ as usize;`.
 
+Types can be created easily, and there are three basic compound data structures, `struct`, `enum`, and tuples. `struct`s and tuples are similar to other languages. Unlike other languages, Rust's `enum`s are much more powerful and interesting, able to represent variants with encapsulated values and generics.
+
+```rust
+// Structure with generic
+struct One<T> {
+    foo: usize,
+    bar: T
+}
+// 2-tuple
+struct Two(usize, usize);
+// Enum
+enum Three {
+    // Plain.
+    Foo,
+    // Encapsulates a number.
+    Bar(usize),
+}
+```
+
 # We Don't Need No `null`
 
-Cited by its creator (@billion-dollar) as a 'billion-dollar mistake' `null` is one of the most dangerous thorns in a coder's toolbox. For example, every time a programmer wishes to `malloc` they must change for the pointer to be a `null`, libraries return it often without forewarning, and it can appear in hard to debug situations during data races. This all happens implicitly, the author of the code must keep all of the information about the system in their head. The consequences for making a mistake could be dramatic in lower level code. Segfaults, deadlocks, and system failure are all very real possibilities when exploring complex OS code. What's more is that all of these errors happen at *runtime* and may take down live systems, causing financial loss, destruction of property, or even loss of life.
+Cited by its creator (@billion-dollar) as a 'billion-dollar mistake' `null` is one of the most dangerous thorns in a coder's toolbox. For example, every time a programmer wishes to `malloc` they must check for the pointer to be a `null`, libraries return it often without forewarning, and it can appear in hard to debug situations during data races. This all happens implicitly, the author of the code must keep all of the information about the system in their head. The consequences for making a mistake could be dramatic in lower level code. Segfaults, deadlocks, and system failure are all very real possibilities when exploring complex OS code. What's more is that all of these errors happen at *runtime* and may take down live systems, causing financial loss, destruction of property, or even loss of life.
+
+In languages like C, C++, and Java a tremendous amount of research has gone into developing products like Coverity (CITEME from Yvonne's mail) and PVS-Studio (CITEME) to help discover possible null pointer consistencys. Engler et al (@deviant) suggest heuristic methods are used to determine the 'null state' of a variable throughout the control flow of a program. What if programmers could just stop worrying about `null` all together?
 
 Many functional languages like Haskell and F# have the concept of an `Option`, a concept that Rust shares. Instead of needing to be aware of and check for `null` at every occurrence, the language semantics require the programmer to explicitly decide on the control flow for all values. It is common for newcomers to the language to dislike the "noise" this brings to the code, but once they understand the benefits of this design choice, and the ways to work with it, these complaints tend fade.
 
@@ -277,6 +312,8 @@ let mapped = maybe_foo.map(|x| x as f64);
 ```
 
 # Results and `try!()`
+
+When working with traditional languages such as C and C++ it can often be difficult to answer the question "Can this function fail?" Checked exceptions can help, but often APIs are inconsistent, and checks for failure can be forgotten. (@deviant) Some static analysis techniques can be used to determine possible missed failure checks, such has detecting invokations that do check for error. Having failure information included in the function's return and requiring to to be explicitly checked may be a more robust solution over heuristics though.
 
 The `Result<T, E>` enum exists as either `Ok(T)` or `Err(E)` conveys the result of something which may fail with an error. Overall this type feels like an `Option<T>` as above, and is interacted with in largely the same way except that the `Err(E)` variant contains an error type which details information about the error. Using Rust's `match` expression the user can act on various error conditions or success.
 
@@ -315,21 +352,21 @@ impl From<io::Error> for MyError {
 When working with functions which may return a `Result<T, E>` it is common to use the `try!()` macro. This macro expands to either unwrap the `T` value inside and assign it, or return the error up the call stack. This helps reduce visual 'noise' and assist in composition.
 
 ```rust
-fn open_and_read() -> Result<usize, MyError> {
+fn open_and_read() -> Result<String, MyError> {
     let mut f = try!(File::open("foo.txt"));
     let mut s = String::new();
     let num_read = try!(f.read_to_string(&mut s));
-    Ok(num_read)
+    Ok(s)
 }
 ```
 
 Error handling in Rust is explicit, composable, and sane. There are no exceptions, nulls, 'special numbers' (like -1) or anything that may prevent the programmer from handling the error as *they* choose to, even if that is to simply `.unwrap()` it and crash on failure.
 
-# Borrow and Move: Lose the GC
+# Borrow and Move: Forget `free()`
 
 Memory management is hard, that's why programmers invented the garbage collector. These days there are mark-and-sweep GCs, tracing GCs, generational GCs, and all sorts of exotic algorithms to sweep up unused memory. This all arises from the assumption that compilers cannot perform enough static analysis to accurately trace the lifetime of a value throughout the execution of a program. For many languages this is quite true, C being one of the primary offenders. In Rust there is the notion of moving, copying, and referencing.
 
-Like C and C++, Rust features a powerful pointer system that allows programmers to make fine-grain, informed decisions about how values are stored, passed, and represented. Rust goes a step further, introducing the distinction between *immutably borrowing* (`&`), *mutably borrowing* (`&mut`), *copying* (`Copy` trait), and *moving* values. At any given time there may be any number of *immutable borrows*, meanwhile there may only be one *mutable borrow*, and a value may not be used in the function once it has been *moved* out.
+Like C and C++, Rust features a powerful pointer system that allows programmers to make fine-grain, informed decisions about how values are stored, passed, and represented. Like C++, Rust makes use of a concept called Resource Acquisition is Instantiation (RAII). Rust goes a step further, introducing the distinction between *immutably borrowing* (`&`), *mutably borrowing* (`&mut`), *copying* (`Copy` trait), and *moving* values. At any given time there may be any number of *immutable borrows*, meanwhile there may only be one *mutable borrow*, and a value may not be used in the function once it has been *moved* out.
 
 This makes it simple for a programmer to observe a function signature and determine which values the function may mutate or consume, and which it may return. Using this information the compiler is able to determine the lifetime constraints of almost any value without additional notations. In (rare, complex) cases where it does require additional information the programmer can annotate lifetimes just as they would with generic types.
 
@@ -355,6 +392,8 @@ fn main() {
 } // foo is destroyed.
 ```
 
+This behavior is very similar to C++'s RAII facilities and ensures all values are safely destructed in a consistent, predictable way as soon as they are no longer needed. The programmer does not need to worry about making sure each of their `malloc()` calls have a corresponding `free()` or rely on an outside tool (@deviant) to discover such errors. The borrow checker is also able to determine when a value has been *moved* into a function call and should not be further used in the caller, eliminating another possible class of errors.
+
 # Traits: Zero-cost Abstractions
 
 Unlike many common languages today Rust does not use a class based or inheritance based system. Data is stored in `struct`s, primitives, or `enum`s which implement a set of traits that define how it interacts and which functions are available to it. To someone familiar with Java or C++, traits may feel like interfaces. For example, the `File` is a `struct` which implements `Read` and `Write` among other traits. Other structures like `TcpStream` and `UdpSocket` also implement the same `Read` and `Write` interface. Traits are zero-cost abstractions that act to encourage common interfaces and capabilities between like-structures. (@abstraction)
@@ -375,6 +414,8 @@ impl Foo for Thing {
     }
 }
 ```
+
+This notion of composable traits aligns much more closely with the UNIX philosophy than classes and inheritance. Traits can also be used as 'markers' in design patterns like state machines.
 
 # Static Analysis at the Core
 
@@ -409,7 +450,7 @@ use std::sync::mpsc::{channel, Sender, Receiver};
 let (send, recieve) = channel();
 ```
 
-**Locks** can encapsulate data such that it can only be accessed if the lock is held. In Rust, you don't lock code, you lock data, and it's safer because of it. Locks are typically represented by `Mutex`s and shared between threads with an Atomically Reference Counted structure (`Arc`).
+**Locks** can encapsulate data such that it can only be accessed if the lock is held. In Rust, you **don't lock code, you lock data**, and it's safer because of it. Locks are typically represented by `Mutex`s and shared between threads with an Atomically Reference Counted structure (`Arc`). It should be noted that this design of locking data prevents a lock from being required and never given up, a common mistake. (@deviant)
 
 ```rust
 use std::sync::{Arc, Mutex};
@@ -491,7 +532,7 @@ Best of all, there is active operating system development in Rust. There is a pr
 
 # Example Problem: Dining Philosophers
 
-The "Dining Philosophers" problem is a fantastic problem for operating systems education as it teaches about concurrency and mutexes so well, a simple implementation of the problem will deadlock. A comparison between solutions in [C](http://rosettacode.org/wiki/Dining_philosophers#C) (@dining-c) and [Rust](https://github.com/steveklabnik/dining_philosophers/blob/master/src/main.rs) (@dining-rust) is below.
+The "Dining Philosophers" problem is a fantastic problem for operating systems education as it teaches about concurrency and mutexes so well, a naive implementation of the problem would deadlock. A comparison between solutions in [C](http://rosettacode.org/wiki/Dining_philosophers#C) (@dining-c) and [Rust](https://github.com/steveklabnik/dining_philosophers/blob/master/src/main.rs) (@dining-rust) is below.
 
 In Rust the table can be represented like so:
 
