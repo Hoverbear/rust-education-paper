@@ -1,8 +1,13 @@
 ---
 title: Understanding Over Guesswork
 author:
-  - Andrew Hobden
-  - Yvonne Coady
+  - name: Andrew Hobden
+    affiliation: 1
+  - name: Yvonne Coady
+    affiliation: 1
+address:
+  - code: 1
+    address: Computer Science, University of Victoria
 tags: [Education, Rust, Operating Systems]
 abstract: |
   We discuss the merits of instructing operating systems courses using the modern systems programming language Rust from the point of view of the student, educator, and evaluator.
@@ -188,15 +193,15 @@ references:
 
 # The State of the OS Course
 
-Concurrency, parallelism, memory management, process scheduling, deadlocks, mutexes, system calls, filesystems, and architectural considerations are all commonly taught concepts in Operating Systems courses. These topics can be a struggle to understand, even for determined students, due to their complex, low-level characteristics. Students are typically asked to use C or C++ to accomplish assignments on the above tasks.
+Concurrency, parallelism, memory management, process scheduling, deadlocks, mutexes, system calls, filesystems, and architectural considerations are all commonly taught concepts in Operating Systems courses. These topics can be a struggle to understand, even for determined students, due to their complex, low-level characteristics. Students are typically asked to use C or C++ to accomplish assignments on the above tasks and it is usually one of their first few courses with the language.
 
-Instructors may also find themselves struggling, as these assignments can be difficult to create, and at times nearly impossible to evaluate. Instructors and their markers desire assignments which are simple enough to fit into a few files, demonstrate understanding of failure modes, can be tested effectively in a preferably automated fashion, and show students the caveats of their attempts to solve the problem. In many cases, a trade-off is necessary. Building an interactive shell is a common, and much loved, assignment in which instructors must balance the number of features required with the time provided. Features such as pipes, background tasks, tab-completion, and environment variables are all desirable and interesting to implement, but contribute greatly to the complexity of the code, as well as the amount of time it takes to evaluate.
+Instructors may also find themselves struggling, as these assignments can be difficult to create, and at times nearly impossible to evaluate effectively. Instructors and their markers desire assignments which are simple enough to fit into a few files, demonstrate understanding of failure modes, can be tested effectively in an automated fashion, and show students the caveats of their attempts to solve the problem. In many cases, a trade-off is necessary. For example, building an interactive shell is a common, and much loved, assignment in which instructors must balance the number of features required with the time provided. Features such as pipes, background tasks, tab-completion, and environment variables are all desirable and interesting to implement, but contribute greatly to the complexity of the code, as well as the amount of time it takes to evaluate.
 
-At the University of Victoria evaluation is typically done through an interactive demo involving the student and one of the teaching assistants. This method gives the student a chance to explain qualities and characteristics of their code, demonstrate it's features, and explain any possible bugs which may be discovered as the code is tested. Testing is often light and relatively incomplete due to time and technical constraints. Tools like `valgrind` and `clang` (with all warnings and lints flagged on) help in evaluation, but are not always used. We have found this to be a better method than the marker grading the student without any input from them, as it encourages a certain level of independence and creativity in the students, it also encourages students to improve their ability to explain their code. This method also gives the student immediate feedback that they may use on further assignments, rather than hearing back sometimes weeks later, often well into the next assignment.
+At the University of Victoria evaluation is typically done through an interactive demo involving the student and one of the teaching assistants. This method gives the student a chance to explain qualities and characteristics of their code, demonstrate it's features, and explain any possible bugs which may be discovered as the code is tested. Testing is often light and relatively incomplete due to time and technical constraints. Tools like `valgrind` and `clang` (with all warnings and lints flagged on) help in evaluation, but are not always used. We have found this to be a better method than the marker grading the student without any input from them, as it encourages a certain level of independence and creativity in the students, it also encourages students to improve their ability to explain their work, an important ability for future research and commercial success. This method also gives the student immediate feedback that they may use on further assignments, rather than hearing back sometimes weeks later, often well into the next assignment.
 
 # Introducing Rust
 
-Rust (@rust) is a systems oriented ML-family language supported by Mozilla Research. It was originally conceived by Graydon Hoare and reached it's first stable release on May 15, 2015 (@rust-release).
+Rust (@rust) is a systems oriented ML-family language supported by Mozilla Research. It was originally conceived by Graydon Hoare and reached it's first stable release on May 15, 2015 (@rust-release). It is dual licensed Apache and MIT, fully open source, and governed through an extensive Request For Comment (RFC) process.
 
 Rust offers a robust set of desirable features for systems code:
 
@@ -209,10 +214,11 @@ Rust offers a robust set of desirable features for systems code:
 * Pattern matching
 * Type inference
 * Minimal runtime (removable, @no-std)
+* No garbage collector or VM necessary
 * Efficient C bindings
 * Robust static analysis
 
-It accomplishes these features through a number of novel features largely built off it's type system and the borrow checker. Both will be covered below. The Rust community has been working to firmly position Rust as a powerful tool for programming in the large (@uls).
+It accomplishes these features through a number of novel features largely built off its type system and the borrow checker. Both will be covered below. The Rust community has been working to firmly position Rust as a powerful tool for programming in ultra-large, (@uls), embedded, and networking systems.
 
 ## Rust Basics
 
@@ -230,9 +236,7 @@ The only quality of the above code which may be at all suprising to programmers 
 
 This quality does not do away with conciseness or elegance of code. Community members have developed bindings for well-known tools like Redis (@redis) and found the APIs for equivalent Rust and Python actions of relatively similar "feel", despite the benefits of Rust's type system providing an additional safety net (@redis-api).
 
-Rust does, however, have significant semantic differences compared to C-like languages. For variable declaration, Rust has the `let` keyword which is *immutable by default*, mutability is opt-in via `let mut`. This opt-in mutability was found by the community to encourage better code. Instead of the programmer needing to remember to use `const` the compiler patiently informs them of any variables they might have forgotten to make mutable, and encourages them to evaluate if the variable does indeed need to be mutable.
-
-The Rust compiler also enforces best practices, for example, introducing a file-level `const` which is not in all capitals is a compile-time error. It will also notify the programmer when there is unreachable code, unused assignments, and unused imports.
+Rust does, however, have significant semantic differences compared to C-like languages. For variable declaration, Rust has the `let` keyword which is *immutable by default*, mutability is opt-in via `let mut`. This opt-in mutability was found by the community to encourage better code. Instead of the programmer needing to remember to use `const` the compiler patiently informs them of any variables they might have forgotten to make mutable, and encourages them to evaluate if the variable does indeed need to be mutable, or if it is unnecessarily mutable.
 
 As well, function definitions differ from C-like languages. This change makes function definitions easier to comprehend when dealing with complex parameters, generics, and return values. Numerous reasoning for why C's declaration syntax is inadequate were well explained by Rob Pike (@go-fn).
 
@@ -289,16 +293,18 @@ struct Two(usize, usize);
 enum Three {
     // Plain.
     Foo,
-    // Encapsulates a number.
+    // Variant with Tuple.
     Bar(usize),
+    // Variant with Struct.
+    Baz { x: u64, y: u64, z: u64, },
 }
 ```
 
 # We Don't Need No `null`
 
-Cited by its creator (@billion-dollar) as a 'billion-dollar mistake' `null` is one of the most dangerous thorns in a coder's toolbox. For example, every time a programmer wishes to `malloc` they must check for the pointer to be a `null`, libraries return it often without forewarning, and it can appear in hard to debug situations during data races. This all happens implicitly, the author of the code must keep all of the information about the system in their head. The consequences for making a mistake could be dramatic in lower level code. Segfaults, deadlocks, and system failure are all very real possibilities when exploring complex OS code. What's more is that all of these errors happen at *runtime* and may take down live systems, causing financial loss, destruction of property, or even loss of life.
+Cited by its creator (@billion-dollar) as a 'billion-dollar mistake' `null` is one of the most dangerous thorns in a programmers toolbox. For example, every time a programmer wishes to `malloc` they must check for the pointer to be a `null`, libraries return it often without forewarning, and it can appear in hard to debug situations during data races. This all happens implicitly, the author of the code must keep all of the information about the system in their head. Worse, the consequences for making a mistake could be dramatic in lower level code. Segfaults, deadlocks, and system failure are all very real possibilities when exploring complex OS code. What's more is that all of these errors happen at *runtime* and may take down live systems, causing financial loss, destruction of property, or even loss of life.
 
-In languages like C, C++, and Java a tremendous amount of research has gone into developing products like Coverity (@coverity) and PVS-Studio (@pvs-studio) to help discover possible null pointer consistencys. Engler et al (@deviant) suggest heuristic methods are used to determine the 'null state' of a variable throughout the control flow of a program. What if programmers could just stop worrying about `null` all together?
+In languages like C, C++, and Java a tremendous amount of research and development time has gone into developing products like Coverity (@coverity) and PVS-Studio (@pvs-studio) to help discover possible null pointer consistencies. Engler et al (@deviant) suggest heuristic methods are used to determine the 'null state' of a variable throughout the control flow of a program. What if programmers could just stop worrying about `null` all together?
 
 Many functional languages like Haskell and F# have the concept of an `Option`, a concept that Rust shares. Instead of needing to be aware of and check for `null` at every occurrence, the language semantics require the programmer to explicitly decide on the control flow for all values. It is common for newcomers to the language to dislike the "noise" this brings to the code, but once they understand the benefits of this design choice, and the ways to work with it, these complaints tend fade.
 
@@ -314,16 +320,16 @@ let default = not_foo.unwrap_or(1);
 let matched = match maybe_foo {
     Some(x) => x,
     None => -1,
-}
+};
 // Mapping
 let mapped = maybe_foo.map(|x| x as f64);
 ```
 
 # Results and `try!()`
 
-When working with traditional languages such as C and C++ it can often be difficult to answer the question "Can this function fail?" Checked exceptions can help, but often APIs are inconsistent, and checks for failure can be forgotten. (@deviant) Some static analysis techniques can be used to determine possible missed failure checks, such has detecting invokations that do check for error. Having failure information included in the function's return and requiring to to be explicitly checked may be a more robust solution over heuristics though.
+When working with traditional languages such as C and C++ it can often be difficult to answer the question "Can this function fail?" Checked exceptions can help, but often APIs are inconsistent, and checks for failure can be forgotten. (@deviant) Some static analysis techniques can be used to determine possible missed failure checks, such has detecting invocations that do check for error. Having failure information included in the function's signature and requiring to to be explicitly checked may be a more robust solution over heuristics though.
 
-The `Result<T, E>` enum exists as either `Ok(T)` or `Err(E)` conveys the result of something which may fail with an error. Overall this type feels like an `Option<T>` as above, and is interacted with in largely the same way except that the `Err(E)` variant contains an error type which details information about the error. Using Rust's `match` expression the user can act on various error conditions or success.
+The `Result<T, E>` enum exists as either `Ok(T)` or `Err(E)` and conveys the result of something which may fail with an error. Overall this type feels like an `Option<T>` as above, and is interacted with in largely the same way except that the `Err(E)` variant contains an error type which details information about the error. Using Rust's `match` expression the user can act on various error conditions or success.
 
 ```rust
 use std::io;
@@ -342,7 +348,7 @@ let val_or_desc = match success {
 };
 ```
 
-It is a compiler warning to perform an action such as `file.read_to_string()` which returns a `Result<usize, Error>` and to not handle the error in some way. In Rust is it idiomatic for any recoverable error to be passed up the call stack to where it can be sensibly handled. While approaching this idea newcomers typically struggle with the fact that an `io::Error` and a `Utf8Error` are different types and cannot be returned in the same `Result<T,E>`, since the `E` value would differ and violate Rust's strong typing. This is typically solved by creating a new `Error` which is an enumeration over the possible underlaying errors as well as any the programmer may wish to include themselves. Then there are the `Into<T>` and `From<T>` traits which can be implemented to provide seamless interaction.
+It is a compiler warning to perform an action such as `file.read_to_string(buf)` which returns a `Result<usize, Error>` and to not handle the error in some way. In Rust is it idiomatic for any recoverable error to be passed up the call stack to where it can be sensibly handled. While approaching this idea newcomers typically struggle with the fact that an `io::Error` and a `Utf8Error` are different types and cannot be returned in the same `Result<T,E>`, since the `E` value would differ and violate Rust's strong typing. This is typically solved by creating a new `Error` which is an enumeration over the possible underlaying errors as well as any the programmer may wish to include themselves. Then there are the `Into<T>` and `From<T>` traits which can be implemented to provide seamless interaction.
 
 ```rust
 pub enum MyError {
@@ -368,15 +374,15 @@ fn open_and_read() -> Result<String, MyError> {
 }
 ```
 
-Error handling in Rust is explicit, composable, and sane. There are no exceptions, nulls, 'special numbers' (like -1) or anything that may prevent the programmer from handling the error as *they* choose to, even if that is to simply `.unwrap()` it and crash on failure.
+Error handling in Rust is explicit, composable, and sane. There are no exceptions, nulls, 'magic numbers' (like -1) or anything that may prevent the programmer from handling the error as *they* choose to, even if that is to simply `.unwrap()` it and crash on failure.
 
 # Borrow and Move: Forget `free()`
 
-Memory management is hard, that's why programmers invented the garbage collector. These days there are mark-and-sweep GCs, tracing GCs, generational GCs, and all sorts of exotic algorithms to sweep up unused memory. This all arises from the assumption that compilers cannot perform enough static analysis to accurately trace the lifetime of a value throughout the execution of a program. For many languages this is quite true, C being one of the primary offenders. In Rust there is the notion of moving, copying, and referencing.
+Memory management is hard, that's why many programmers like garbage collectors. These days there are mark-and-sweep GCs, tracing GCs, generational GCs, and all sorts of exotic algorithms to sweep up unused memory. This all arises from the assumption that compilers cannot perform enough static analysis to accurately trace the lifetime of a value throughout the execution of a program. For many languages this is quite true, C being one of the primary offenders.
 
-Like C and C++, Rust features a powerful pointer system that allows programmers to make fine-grain, informed decisions about how values are stored, passed, and represented. Like C++, Rust makes use of a concept called Resource Acquisition is Instantiation (RAII). Rust goes a step further, introducing the distinction between *immutably borrowing* (`&`), *mutably borrowing* (`&mut`), *copying* (`Copy` trait), and *moving* values. At any given time there may be any number of *immutable borrows*, meanwhile there may only be one *mutable borrow*, and a value may not be used in the function once it has been *moved* out.
+In Rust there is the notion of moving, copying, and referencing. Like C and C++, Rust features a powerful pointer system that allows programmers to make fine-grain, informed decisions about how values are stored, passed, and represented. Like C++, Rust makes use of a concept called Resource Acquisition is Instantiation (RAII). Rust goes a step further, introducing the distinction between *immutably borrowing* (`&`), *mutably borrowing* (`&mut`), *copying* (`Copy` trait), and *moving* values. At any given time there may be any number of *immutable borrows*, meanwhile there may only be one *mutable borrow*, and a value may not be used in the function once it has been *moved* out.
 
-This makes it simple for a programmer to observe a function signature and determine which values the function may mutate or consume, and which it may return. Using this information the compiler is able to determine the lifetime constraints of almost any value without additional notations. In (rare, complex) cases where it does require additional information the programmer can annotate lifetimes just as they would with generic types.
+This makes it simple for a programmer to observe a function signature and determine which values the function may mutate or consume, and which it may return. Using this information the compiler is able to determine the lifetime constraints of almost any value without additional notations. In (rare, complex) cases where it does require additional information the programmer can annotate lifetimes just as they would generic type parameters.
 
 ```rust
 fn main() {
@@ -404,7 +410,7 @@ This behavior is very similar to C++'s RAII facilities and ensures all values ar
 
 # Traits: Zero-cost Abstractions
 
-Unlike many common languages today Rust does not use a class based or inheritance based system. Data is stored in `struct`s, primitives, or `enum`s which implement a set of traits that define how it interacts and which functions are available to it. To someone familiar with Java or C++, traits may feel like interfaces. For example, the `File` is a `struct` which implements `Read` and `Write` among other traits. Other structures like `TcpStream` and `UdpSocket` also implement the same `Read` and `Write` interface. Traits are zero-cost abstractions that act to encourage common interfaces and capabilities between like-structures. (@abstraction)
+Unlike many common languages today Rust does not use a class based or inheritance based system. Data is stored in `struct`s, primitives, or `enum`s which implement a set of traits that define how it interacts and which functions are available to it. To someone familiar with Java or C++, traits may feel like interfaces. For example, the `File` is a `struct` which implements `Read` and `Write` among other traits. Other structures like `TcpStream` and `UdpSocket` also implement the same `Read` and `Write` trait. Traits are zero-cost abstractions that act to encourage common interfaces and capabilities between like-structures. (@abstraction)
 
 ```rust
 struct Thing {
@@ -423,7 +429,7 @@ impl Foo for Thing {
 }
 ```
 
-This notion of composable traits aligns much more closely with the UNIX philosophy than classes and inheritance. Traits can also be used as 'markers' in design patterns like state machines.
+This notion of composable traits aligns much more closely with the UNIX philosophy than classes and inheritance. Traits fit easily together, are widespread in their implementation, and allow for common interfaces between modules to permit better adaptability. Traits can also be used as 'markers' in design patterns like state machines to provide additional compile time verification of correctness.
 
 # Static Analysis at the Core
 
@@ -449,7 +455,7 @@ As a result of the static analysis done by `rustc` it is able to infer informati
 
 Threading is perhaps one of the most powerful and robust features of Rust. The characteristics detailed above culminate in a sort of *tour de force* when used bravely in a threaded context.
 
-Harnessing the power of ownership semantics, the type system, the standard library's threading modules there are a number of benefits (@fearless-concurrency):
+Harnessing the power of ownership semantics, the type system, the standard library's threading modules there are a number of tools (@fearless-concurrency):
 
 **Channels** provide a way to transfer messages (and ownership) between threads without fear of there being later (unsafe) access to the data by other threads. The vanilla channel provided by the standard library is a Multiple-Producer, Single-Consumer channel.
 
@@ -497,7 +503,7 @@ fn main() {
 The concept of "Safety" in code is often poorly defined. In general, safety can be broken down into three categories:
 
 * **Type Safety** is the ability of a language to prevent or discourage type errors, such as treating a `float` like an `int`. Rust and languages like Haskell excel here as their type systems are strong, explicit (but often inferred), and do not include the notion of a `null` that can go anywhere indiscriminately.
-* **Memory Safety** is the ability of a language to reduce or eliminate the possibility of mistakes like writing a 64 bit value into a 32 bit space (overwriting unintended data), or multi-threaded mutable access to the same memory. Rust's borrow checker effectively eliminates data races in safe code.
+* **Memory Safety** is the ability of a language to reduce or eliminate the possibility of mistakes like writing a 64 bit value into a 32 bit space (overwriting unintended data), or multi-threaded mutable access to the same memory. Rust's borrow checker effectively eliminates data races in safe code and strong type safety prevents unintended clobbering.
 * **Thread Safety** is the ability of a language to prevent inter-thread race conditions, such as one thread exiting when another thread is waiting on data from it. Rust provides some robust tools for managing thread pools integrated into it's type system, however some mistakes are still possible if the programmer works hard enough to accomplish them.
 
 Rust advertises both type safety and data safety, accomplishing both very effectively. There is still research and development to be done before it can truthfully bill itself as thread-safe, but this type of safety is perhaps the most elusive.
