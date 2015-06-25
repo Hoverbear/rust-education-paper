@@ -162,7 +162,7 @@ references:
         family: Reed
     URL: ftp://ftp.cs.washington.edu/tr/2015/03/UW-CSE-15-03-02.pdf
   - id: deviant
-    title: Bugs as Deviant Behavior: A General Approach to Inferring Errors in Systems Code
+    title: "Bugs as Deviant Behavior: A General Approach to Inferring Errors in Systems Code"
     type: webpage
     authors:
       - given: Dawson
