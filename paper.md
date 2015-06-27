@@ -10,7 +10,7 @@ address:
     address: Computer Science, University of Victoria
 tags: [Education, Rust, Operating Systems]
 abstract: |
-  We discuss the merits of instructing operating systems courses using the modern systems programming language Rust from the point of view of the student, educator, and evaluator.
+  We discuss the merits of instructing operating systems courses using the modern systems programming language Rust from the point of view of the student, educator, and evaluator. We believe it provides an array of beneficial qualities that encourage understanding, best practices, and further study.
 references:
   - id: rust
     title: Rust
@@ -197,11 +197,22 @@ Concurrency, parallelism, memory management, process scheduling, deadlocks, mute
 
 Instructors may also find themselves struggling, as these assignments can be difficult to create, and at times nearly impossible to evaluate effectively. Instructors and their markers desire assignments which are simple enough to fit into a few files, demonstrate understanding of failure modes, can be tested effectively in an automated fashion, and show students the caveats of their attempts to solve the problem. In many cases, a trade-off is necessary. For example, building an interactive shell is a common, and much loved, assignment in which instructors must balance the number of features required with the time provided. Features such as pipes, background tasks, tab-completion, and environment variables are all desirable and interesting to implement, but contribute greatly to the complexity of the code, as well as the amount of time it takes to evaluate.
 
-At the University of Victoria evaluation is typically done through an interactive demo involving the student and one of the teaching assistants. This method gives the student a chance to explain qualities and characteristics of their code, demonstrate it's features, and explain any possible bugs which may be discovered as the code is tested. Testing is often light and relatively incomplete due to time and technical constraints. Tools like `valgrind` and `clang` (with all warnings and lints flagged on) help in evaluation, but are not always used. We have found this to be a better method than the marker grading the student without any input from them, as it encourages a certain level of independence and creativity in the students, it also encourages students to improve their ability to explain their work, an important ability for future research and commercial success. This method also gives the student immediate feedback that they may use on further assignments, rather than hearing back sometimes weeks later, often well into the next assignment.
+# Deviant Behavior
+
+Engler et al identified a number of problem classes in their work in static analysis that offer students and professionals alike stumbling blocks, particularly when working with systems code like C. (@deviant) They are namely:
+
+* Does lock `L` protect `V`?
+* Must `A` be paired with `B`?
+* Can routine `F` fail?
+* Does security check `Y` protect `X`?
+* Can `A` be done after `B`?
+
+Below we will proceed to show how Rust addresses these potential bugs in a sane, clean, and robust manner. In Rust, locks protect data inherently, not code, RAII is used to ensure allocations are followed by frees, routines with the potential for failure carry it explicitly in their function signature, security checks can be forced by the type system or through marker traits for 'tainted' data, and powerful move semantics eliminate use-after-free errors.
+
 
 # Introducing Rust
 
-Rust (@rust) is a systems oriented ML-family language supported by Mozilla Research. It was originally conceived by Graydon Hoare and reached it's first stable release on May 15, 2015 (@rust-release). It is dual licensed Apache and MIT, fully open source, and governed through an extensive Request For Comment (RFC) process.
+Rust (@rust) is a systems oriented ML-family language supported by Mozilla Research. It was originally conceived by Graydon Hoare and reached its first stable release on May 15, 2015 (@rust-release). It is dual licensed Apache and MIT, fully open source, and governed through an extensive Request For Comment (RFC) process.
 
 Rust offers a robust set of desirable features for systems code:
 
@@ -251,35 +262,11 @@ fn example_generic_alt<U>(reader: U) -> u64
 
 # A Strong Type System
 
-In some problem areas it is desirable to have a dynamic type system, particularly in higher level code. Implicit, possibly lossy data conversions can often be dangerous in system code. It is common for OS students to accidentally take a pointer as a value, or vice versa. It would be desirable for them to have a stronger type system which informs them of this situation.
+While a dynamic type system is desirable in some areas, particularly in higher level code, things like implicit, possibly lossy data conversions can often be dangerous in system code. In our experience, many operating systems students also struggle with the mental concepts of pointers and their uses. This can lead to taking pointers as values and performing pointer arithmetic.
 
-For example, in C:
+The programmer is not *prevented* from doing these things in Rust, it only ensures that it is actually the intended action. The correct way to get the address of a value (and store it as a separate value) in Rust is `&foo as *const _ as usize;`. For many students though, attempting to cast pointers into a value is actually a mistake in their intention. Rust helps users with this by automatically dereferencing pointers when necessary, and providing stronger tools for common places where these mistakes crop up, like string indexing or dynamic array access.
 
-```cpp
-void main() {
-    float foo = 1.1;
-    // Lossy conversion.
-    int bar = foo;  // No error.
-    // Possibly unintended conversion.
-    int baz = &foo; // Compile-time warning.
-}
-```
-
-Conversely, in Rust explicit conversions are required:
-
-```rust
-fn main() {
-    let foo = 1.1;
-    // Lossy conversation.
-    let bar = foo as u64;
-    // Potentially unintended conversion.
-    let baz = &foo as u64; // Compile-time error.
-}
-```
-
-The programmer is not *prevented* from doing these things, Rust only ensures that it is actually the intended action. The correct way to get the address of a value (and store it as a separate value) in Rust is `&foo as *const _ as usize;`.
-
-Types can be created easily, and there are three basic compound data structures, `struct`, `enum`, and tuples. `struct`s and tuples are similar to other languages. Unlike other languages, Rust's `enum`s are much more powerful and interesting, able to represent variants with encapsulated values and generics.
+Types can be created easily, and there are three basic compound data structures, `struct`, `enum`, and tuples. `struct`s and tuples are similar to other languages. Unlike other languages, Rust's `enum`s are much more powerful and interesting, able to represent variants with encapsulated values, generics, and even `struct`s!
 
 ```rust
 // Structure with generic
@@ -300,7 +287,7 @@ enum Three {
 }
 ```
 
-# We Don't Need No `null`
+# We Don't Need A `null`
 
 Cited by its creator (@billion-dollar) as a 'billion-dollar mistake' `null` is one of the most dangerous thorns in a programmers toolbox. For example, every time a programmer wishes to `malloc` they must check for the pointer to be a `null`, libraries return it often without forewarning, and it can appear in hard to debug situations during data races. This all happens implicitly, the author of the code must keep all of the information about the system in their head. Worse, the consequences for making a mistake could be dramatic in lower level code. Segfaults, deadlocks, and system failure are all very real possibilities when exploring complex OS code. What's more is that all of these errors happen at *runtime* and may take down live systems, causing financial loss, destruction of property, or even loss of life.
 
@@ -308,7 +295,7 @@ In languages like C, C++, and Java a tremendous amount of research and developme
 
 Many functional languages like Haskell and F# have the concept of an `Option`, a concept that Rust shares. Instead of needing to be aware of and check for `null` at every occurrence, the language semantics require the programmer to explicitly decide on the control flow for all values. It is common for newcomers to the language to dislike the "noise" this brings to the code, but once they understand the benefits of this design choice, and the ways to work with it, these complaints tend fade.
 
-In Rust the `Option<T>` enum exists as either a `Some(T)` or a `None` (the equivalent of a `null`). Rust provides a number of techniques for working with this type. First, is the simple "just crash if it doesn't work" call `.unwrap()`, then there is `.unwrap_or(some_default)`. As well there are functions like `.is_some()` and `.is_none()` which function as expected. It's also possible work work with an optional value without unwrapping it via `.map()`. It is very common to utilize Rust's `match` expression to handle control flow and unwrap enumerated values.
+In Rust the `Option<T>` enum exists as either a `Some(T)` or a `None` (the equivalent of a `null`). Rust provides a number of techniques for working with this type. First, is the simple "just crash if it doesn't work" call `.unwrap()`, then there is `.unwrap_or(some_default)`. As well there are functions like `.is_some()` and `.is_none()` which function as expected. It is also possible work work with an optional value without unwrapping it via `.map()`. It is very common to utilize Rust's `match` expression to handle control flow and unwrap enumerated values.
 
 ```rust
 // Create a `Some(T)` and a None.
@@ -464,7 +451,7 @@ use std::sync::mpsc::{channel, Sender, Receiver};
 let (send, recieve) = channel();
 ```
 
-**Locks** can encapsulate data such that it can only be accessed if the lock is held. In Rust, you **don't lock code, you lock data**, and it's safer because of it. Locks are typically represented by `Mutex`s and shared between threads with an Atomically Reference Counted structure (`Arc`). It should be noted that this design of locking data prevents a lock from being required and never given up, a common mistake. (@deviant)
+**Locks** can encapsulate data such that it can only be accessed if the lock is held. In Rust, you **don't lock code, you lock data**, and it is safer because of it. Locks are typically represented by `Mutex`s and shared between threads with an Atomically Reference Counted structure (`Arc`). It should be noted that this design of locking data prevents a lock from being required and never given up, a common mistake. (@deviant)
 
 ```rust
 use std::sync::{Arc, Mutex};
@@ -504,7 +491,7 @@ The concept of "Safety" in code is often poorly defined. In general, safety can 
 
 * **Type Safety** is the ability of a language to prevent or discourage type errors, such as treating a `float` like an `int`. Rust and languages like Haskell excel here as their type systems are strong, explicit (but often inferred), and do not include the notion of a `null` that can go anywhere indiscriminately.
 * **Memory Safety** is the ability of a language to reduce or eliminate the possibility of mistakes like writing a 64 bit value into a 32 bit space (overwriting unintended data), or multi-threaded mutable access to the same memory. Rust's borrow checker effectively eliminates data races in safe code and strong type safety prevents unintended clobbering.
-* **Thread Safety** is the ability of a language to prevent inter-thread race conditions, such as one thread exiting when another thread is waiting on data from it. Rust provides some robust tools for managing thread pools integrated into it's type system, however some mistakes are still possible if the programmer works hard enough to accomplish them.
+* **Thread Safety** is the ability of a language to prevent inter-thread race conditions, such as one thread exiting when another thread is waiting on data from it. Rust provides some robust tools for managing thread pools integrated into its type system, however some mistakes are still possible if the programmer works hard enough to accomplish them.
 
 Rust advertises both type safety and data safety, accomplishing both very effectively. There is still research and development to be done before it can truthfully bill itself as thread-safe, but this type of safety is perhaps the most elusive.
 
@@ -514,7 +501,7 @@ One significant advantage of using Rust over its alternatives is its robust, opi
 
 Package management is a feature Rust has inherited from several other modern languages. `cargo` was designed under the maintenance of Yehuda Katz, the creator of Ruby's `bundler`. All package dependencies, build options, and tasks are defined in a `Cargo.toml` file. Package versions are kept in a `Cargo.lock` that `cargo` creates whenever it needs. There is no 'fetch' or 'install' command, dependencies are checked and (if necessary) pulled on `cargo build`, `test`, or `doc`.
 
-Rust supports both *unit tests* and *integration tests* by default. Unit tests may appear wherever is appropriate in the code and are annotated by `#[test]`, it's common for designers to include a `test` module in their code. Integration tests are written in the `tests/` directory and allow a package to be tested as a depended upon library. Testing is done by simply invoking `cargo test` in the project directory. These features blow away barriers which programmers might face in other languages that would prevent them from bothering to test. Additionally, it makes marking Rust based projects very easy, all an instructor needs to do is provide (or replace) the `tests/` directory with an appropriate suite.
+Rust supports both *unit tests* and *integration tests* by default. Unit tests may appear wherever is appropriate in the code and are annotated by `#[test]`, it is common for designers to include a `test` module in their code. Integration tests are written in the `tests/` directory and allow a package to be tested as a depended upon library. Testing is done by simply invoking `cargo test` in the project directory. These features blow away barriers which programmers might face in other languages that would prevent them from bothering to test. Additionally, it makes marking Rust based projects very easy, all an instructor needs to do is provide (or replace) the `tests/` directory with an appropriate suite.
 
 ```rust
 #[test]
@@ -543,76 +530,6 @@ One of the biggest dangers in choosing a language that "Is not C" to teach opera
 Mozilla's IRC network hosts the popular #rust channel which regularly has over 800 members at any given time. [`crates.io`](http://crates.io/) hosts over 2300 'crates', Rust's nickname for a package. The language reached 1.0 on May 15, 2015 (@rust-release) and has been in development since 2006. The community is active and friendly with special interest groups hosting their own channels for various purposes. There are a number of active article feeds and active discussion on [Stack Overflow](https://stackoverflow.com/questions/tagged/rust). (@rust-stackoverflow)
 
 Best of all, there is active operating system development in Rust. There is a project to develop `coreutils` (@coreutils), a kernel (@rust-boot), operating systems (@reenix), and embedded system platforms (@zinc). At the time of writing, these projects are young enough that students could even contribute components upstream.
-
-# Example Problem: Dining Philosophers
-
-The "Dining Philosophers" problem is a fantastic problem for operating systems education as it teaches about concurrency and mutexes so well, a naive implementation of the problem would deadlock. A comparison between solutions in [C](http://rosettacode.org/wiki/Dining_philosophers#C) (@dining-c) and [Rust](https://github.com/steveklabnik/dining_philosophers/blob/master/src/main.rs) (@dining-rust) is below.
-
-In Rust the table can be represented like so:
-
-```rust
-let table = Arc::new(Table { forks: vec![
-    Mutex::new(true),
-    // ...
-]});
-```
-
-In C:
-
-```cpp
-pthread_mutex_t forks[N];
-// ..
-for (i=0;i<5; i++) {
-    failed = pthread_mutex_init(&forks[i], NULL);
-    // ...
-}
-```
-
-This uses an *atomically reference counted*, typed structure containing a vector of boolean mutexes. Being an `Arc<T>` lets the data be safely shared between threads and destroyed when there are no remaining references. The equivalent C code uses a similar concept with a global variable. In C declaration happens at a different point then instantiation, unlike Rust which prevents the chance of using uninitialized variables.
-
-The representation of a philosopher does not differ tremendously in semantics, but considerably in representation. Instead of the `Philosopher` containing a reference to a thread, or carrying pointer data as it does in C, the Rust representation makes use of the `mpsc::Sender` which is the Producer side of a Multiple-producer/Single-Consumer type. This is a more thread safe representation and better demonstration of best practices.
-
-```rust
-struct Philosopher {
-    name: String,
-    done: Sender<bool>,
-    left: usize,
-    right: usize,
-}
-```
-
-```cpp
-typedef struct philData {
-    pthread_mutex_t *fork_lft, *fork_rgt;
-    const char *name;
-    pthread_t thread;
-    int   fail;
-} Philosopher;
-```
-
-The Rust version also includes a very simple, understandable `main()` which communicates the problem clearly.
-
-```rust
-// Spawn threads, create handles.
-let handles: Vec<_> = philosophers.into_iter()
-.map(|p| {
-    let table = table.clone();
-
-    thread::spawn(move || {
-        p.eat(&table);
-    })
-}).collect();
-// Wait for `done` messages.
-for _ in 0..5 {
-    done_rx.recv().unwrap();
-}
-// Join all threads.
-for h in handles {
-    h.join().ok().expect("Couldn't join a thread.");
-}
-```
-
-In the Rust guides there is an entire article devoted to the [Dining Philosophers](https://doc.rust-lang.org/book/dining-philosophers.html) (@dining-phil) which throughly covers the topic and could be of great use to future instructors seeking to teach the concept.
 
 # Future Work
 
