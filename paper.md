@@ -348,7 +348,7 @@ Engler et al identified a number of problem classes in their work in static anal
 * Does security check `Y` protect `X`?
 * Can `A` be done after `B`?
 
-Below we will proceed to show how Rust addresses these potential bugs in a sane, clean, and robust manner. In Rust, locks protect data inherently, not code, RAII is used to ensure allocations are followed by frees, routines with the potential for failure carry it explicitly in their function signature, security checks can be forced by the type system or through marker traits for 'tainted' data, and powerful move semantics eliminate use-after-free errors.
+Below we will proceed to show how Rust addresses these potential bugs in a sane, clean, and robust manner. In Rust, locks inherently protect data, not code (Section 10), RAII is used to ensure allocations are followed by frees (Section 7), routines with the potential for failure carry it explicitly in their function signature (Section 6), security checks can be forced by the type system or through marker traits for 'tainted' data (Section 8), and powerful move semantics eliminate use-after-free errors (Section 9).
 
 
 # Introducing Rust
@@ -577,6 +577,7 @@ As a result of the static analysis done by `rustc` it is able to infer informati
 * Unused `Result`s.
 * Incorrect type matching.
 * Lossy casts.
+* Use after free errors.
 * Unclear lifetimes (asking for either clarity or refactoring.)
 
 # Threads that don't Bite
