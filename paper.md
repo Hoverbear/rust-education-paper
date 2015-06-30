@@ -297,7 +297,10 @@ references:
       day: 30
   - id: deviant
     title: "Bugs as Deviant Behavior: A General Approach to Inferring Errors in Systems Code"
-    type: webpage
+    type: paper-conference
+    container-title: Eighteenth ACM symposium on Operating systems princibles (SOSP '01)
+    publisher-place: ACM, New York, NY, USA
+    page: 57-72
     authors:
       - given: Dawson
         family: Engler
