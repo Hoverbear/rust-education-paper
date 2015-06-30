@@ -16,22 +16,63 @@ references:
     title: Rust
     type: webpage
     URL: http://rust-lang.org/
+    accessed:
+      year: 2015
+      month: 06
+      day: 30
   - id: rust-release
     title: Announcing Rust 1.0
     type: webpage
     URL: http://blog.rust-lang.org/2015/05/15/Rust-1.0.html
+    accessed:
+      year: 2015
+      month: 06
+      day: 30
   - id: no-std
     type: webpage
     title: libcore
     URL: http://doc.rust-lang.org/book/no-stdlib.html
+    accessed:
+      year: 2015
+      month: 06
+      day: 30
   - id: uls
-    title: Ultra-Large-Scale Systems
-    type: webpage
+    title: "Ultra-Large-Scale Systems: The Software Challenge of the Future"
+    author:
+      - given: Peter
+        family: Feiler
+      - given: Kevin
+        family: Sullivan
+      - given: Kurt
+        family: Wallnau
+      - given: Richard
+        family: Gabriel
+      - given: John
+        family: Goodenough
+      - given: Richard
+        family: Linger
+      - given: Thomas
+        family: Longstaff
+      - given: Rick
+        family: Kazman
+      - given: Mark
+        family: Klein
+      - given: Linda
+        family: Northrop
+      - given: Douglas
+        family: Schmidt
+    year: 2006
+    publisher: Software Engineering Institute, Carnegie Mellon University
+    type: book
     URL: https://www.sei.cmu.edu/uls/
   - id: redis
     title: Redis
     type: webpage
     URL: http://redis.io/
+    accessed:
+      year: 2015
+      month: 06
+      day: 30
   - id: redis-api
     title: A Fresh Look at Rust
     type: webpage
@@ -39,20 +80,32 @@ references:
       - given: Armin
         family: Ronacher
     URL: http://lucumr.pocoo.org/2014/10/1/a-fresh-look-at-rust/#designing-apis
+    accessed:
+      year: 2015
+      month: 06
+      day: 30
   - id: go-fn
     title: "Go Blog: Function Declaration"
     author:
-        - given: Rob
-          family: Pike
+      - given: Rob
+        family: Pike
     type: webpage
     URL: https://blog.golang.org/gos-declaration-syntax
+    accessed:
+      year: 2015
+      month: 06
+      day: 30
   - id: billion-dollar
     title: "Null References: The Billion Dollar Mistake"
     author:
-        - given: Tony
-          family: Hoare
+      - given: Tony
+        family: Hoare
     type: webpage
     URL: http://www.infoq.com/presentations/Null-References-The-Billion-Dollar-Mistake-Tony-Hoare
+    accessed:
+      year: 2015
+      month: 06
+      day: 30
   - id: abstraction
     title: "Abstraction without overhead: traits in Rust"
     author:
@@ -60,6 +113,10 @@ references:
         family: Turon
     type: webpage
     URL: http://blog.rust-lang.org/2015/05/11/traits.html
+    accessed:
+      year: 2015
+      month: 06
+      day: 30
   - id: travis-docs
     title: "Rust, Travis, and Github Pages"
     author:
@@ -67,10 +124,18 @@ references:
         family: Hobden
     type: webpage
     URL: http://hoverbear.org/2015/03/06/rust-travis-github-pages/
+    accessed:
+      year: 2015
+      month: 06
+      day: 30
   - id: rust-research
     title: "Rust: Academic Research"
     type: webpage
     URL: https://doc.rust-lang.org/nightly/book/academic-research.html
+    accessed:
+      year: 2015
+      month: 06
+      day: 30
   - id: compatability
     title: Stability as a Deliverable
     type: webpage
@@ -80,6 +145,10 @@ references:
         family: Turon
       - given: Niko
         family: Matsakis
+    accessed:
+      year: 2015
+      month: 06
+      day: 30
   - id: release-schedule
     title: Scheduling the Trains
     type: webpage
@@ -87,18 +156,34 @@ references:
     author:
       - given: Aaron
         family: Turon
+    accessed:
+      year: 2015
+      month: 06
+      day: 30
   - id: semantic-versioning
     title: Semantic Versioning
     type: webpage
     URL: http://semver.org/
+    accessed:
+      year: 2015
+      month: 06
+      day: 30
   - id: rust-stackoverflow
     title: Rust Stack Overflow
     type: webpage
     URL: https://stackoverflow.com/questions/tagged/rust
+    accessed:
+      year: 2015
+      month: 06
+      day: 30
   - id: coreutils
     title: uutils/coreutils
     type: webpage
     URL: https://github.com/uutils/coreutils
+    accessed:
+      year: 2015
+      month: 06
+      day: 30
   - id: rust-boot
     title: Writing an OS in Rust in Tiny Steps
     type: webpage
@@ -106,14 +191,26 @@ references:
       - given: Julia
         family: Evans
     URL: http://jvns.ca/blog/2014/03/12/the-rust-os-story/
+    accessed:
+      year: 2015
+      month: 06
+      day: 30
   - id: zinc
     title: zinc.rs
     type: webpage
     URL: http://zinc.rs/
+    accessed:
+      year: 2015
+      month: 06
+      day: 30
   - id: splint
     title: Splint
     type: webpage
     URL: http://splint.org/
+    accessed:
+      year: 2015
+      month: 06
+      day: 30
   - id: region-cyclone
     title: "Region-Based Memory Management in Cyclone"
     type: webpage
@@ -125,15 +222,27 @@ references:
       - family: Wang
       - family: Cheney
     URL: http://209.68.42.137/ucsd-pages/Courses/cse227.w03/handouts/cyclone-regions.pdf
+    accessed:
+      year: 2015
+      month: 06
+      day: 30
   - id: rust-release
     title: Announcing Rust 1.0
     type: webpage
     author: The Rust Core Team
     URL: http://blog.rust-lang.org/2015/05/15/Rust-1.0.html
+    accessed:
+      year: 2015
+      month: 06
+      day: 30
   - id: dining-phil
     title: Dining Philosphers in Rust
     type: webpage
     URL: https://doc.rust-lang.org/book/dining-philosophers.html
+    accessed:
+      year: 2015
+      month: 06
+      day: 30
   - id: dining-rust
     title: Dining Philosophers in Rust
     type: webpage
@@ -141,10 +250,18 @@ references:
       - family: Klabnik
         given: Steve
     URL: https://github.com/steveklabnik/dining_philosophers
+    accessed:
+      year: 2015
+      month: 06
+      day: 30
   - id: dining-c
     title: Dining Philosophers in C
     type: webpage
     URL: http://rosettacode.org/wiki/Dining_philosophers#C
+    accessed:
+      year: 2015
+      month: 06
+      day: 30
   - id: fearless-concurrency
     title: Fearless Concurrency
     type: webpage
@@ -152,6 +269,10 @@ references:
       - given: Aaron
         family: Turon
     URL: http://blog.rust-lang.org/2015/04/10/Fearless-Concurrency.html
+    accessed:
+      year: 2015
+      month: 06
+      day: 30
   - id: reenix
     title: "Reenix: Implementing a Unix-Like Operating System in Rust"
     type: webpage
@@ -159,6 +280,10 @@ references:
       - given: Alex
         family: Light
     URL: https://scialex.github.io/reenix.pdf
+    accessed:
+      year: 2015
+      month: 06
+      day: 30
   - id: patina
     title: "Patina: A Formalization of the Rust Programming Language"
     type: webpage
@@ -166,6 +291,10 @@ references:
       - given: Eric
         family: Reed
     URL: ftp://ftp.cs.washington.edu/tr/2015/03/UW-CSE-15-03-02.pdf
+    accessed:
+      year: 2015
+      month: 06
+      day: 30
   - id: deviant
     title: "Bugs as Deviant Behavior: A General Approach to Inferring Errors in Systems Code"
     type: webpage
@@ -181,14 +310,26 @@ references:
       - given: Benjamin
         family: Chelf
     URL: https://web.stanford.edu/~engler/deviant-sosp-01.pdf
+    accessed:
+      year: 2015
+      month: 06
+      day: 30
   - id: coverity
     title: Coverity
     type: webpage
     URL: https://www.coverity.com/
+    accessed:
+      year: 2015
+      month: 06
+      day: 30
   - id: pvs-studio
     title: PVS-Studio
     type: webpage
     URL: http://www.viva64.com/en/pvs-studio/
+    accessed:
+      year: 2015
+      month: 06
+      day: 30
 ---
 
 # The State of the OS Course
