@@ -199,7 +199,7 @@ Instructors may also find themselves struggling, as these assignments can be dif
 
 # Deviant Behavior
 
-Engler et al identified a number of problem classes in their work in static analysis that offer students and professionals alike stumbling blocks, particularly when working with systems code like C. (@deviant) They are namely:
+Engler et al identified a number of problem classes in their work in static analysis that offer students and professionals alike stumbling blocks, particularly when working with systems code like C. [@deviant] They are namely:
 
 * Does lock `L` protect `V`?
 * Must `A` be paired with `B`?
@@ -212,7 +212,7 @@ Below we will proceed to show how Rust addresses these potential bugs in a sane,
 
 # Introducing Rust
 
-Rust (@rust) is a systems oriented ML-family language supported by Mozilla Research. It was originally conceived by Graydon Hoare and reached its first stable release on May 15, 2015 (@rust-release). It is dual licensed Apache and MIT, fully open source, and governed through an extensive Request For Comment (RFC) process.
+Rust [@rust] is a systems oriented ML-family language supported by Mozilla Research. It was originally conceived by Graydon Hoare and reached its first stable release on May 15, 2015 [@rust-release]. It is dual licensed Apache and MIT, fully open source, and governed through an extensive Request For Comment (RFC) process.
 
 Rust offers a robust set of desirable features for systems code:
 
@@ -229,7 +229,7 @@ Rust offers a robust set of desirable features for systems code:
 * Efficient C bindings
 * Robust static analysis
 
-It accomplishes these features through a number of novel features largely built off its type system and the borrow checker. Both will be covered below. The Rust community has been working to firmly position Rust as a powerful tool for programming in ultra-large, (@uls), embedded, and networking systems.
+It accomplishes these features through a number of novel features largely built off its type system and the borrow checker. Both will be covered below. The Rust community has been working to firmly position Rust as a powerful tool for programming in ultra-large, [@uls], embedded, and networking systems.
 
 ## Rust Basics
 
@@ -245,11 +245,11 @@ The only quality of the above code which may be at all suprising to programmers 
 
 > It is better to be explicit and promote understanding of what is occurring, than to expect the programmer to maintain all of this information in their head and engage in guesswork.
 
-This quality does not do away with conciseness or elegance of code. Community members have developed bindings for well-known tools like Redis (@redis) and found the APIs for equivalent Rust and Python actions of relatively similar "feel", despite the benefits of Rust's type system providing an additional safety net (@redis-api).
+This quality does not do away with conciseness or elegance of code. Community members have developed bindings for well-known tools like Redis [@redis] and found the APIs for equivalent Rust and Python actions of relatively similar "feel", despite the benefits of Rust's type system providing an additional safety net [@redis-api].
 
 Rust does, however, have significant semantic differences compared to C-like languages. For variable declaration, Rust has the `let` keyword which is *immutable by default*, mutability is opt-in via `let mut`. This opt-in mutability was found by the community to encourage better code. Instead of the programmer needing to remember to use `const` the compiler patiently informs them of any variables they might have forgotten to make mutable, and encourages them to evaluate if the variable does indeed need to be mutable, or if it is unnecessarily mutable.
 
-As well, function definitions differ from C-like languages. This change makes function definitions easier to comprehend when dealing with complex parameters, generics, and return values. Numerous reasoning for why C's declaration syntax is inadequate were well explained by Rob Pike (@go-fn).
+As well, function definitions differ from C-like languages. This change makes function definitions easier to comprehend when dealing with complex parameters, generics, and return values. Numerous reasoning for why C's declaration syntax is inadequate were well explained by Rob Pike [@go-fn].
 
 ```rust
 fn example_simple()
@@ -289,9 +289,9 @@ enum Three {
 
 # We Don't Need A `null`
 
-Cited by its creator (@billion-dollar) as a 'billion-dollar mistake' `null` is one of the most dangerous thorns in a programmers toolbox. For example, every time a programmer wishes to `malloc` they must check for the pointer to be a `null`, libraries return it often without forewarning, and it can appear in hard to debug situations during data races. This all happens implicitly, the author of the code must keep all of the information about the system in their head. Worse, the consequences for making a mistake could be dramatic in lower level code. Segfaults, deadlocks, and system failure are all very real possibilities when exploring complex OS code. What's more is that all of these errors happen at *runtime* and may take down live systems, causing financial loss, destruction of property, or even loss of life.
+Cited by its creator [@billion-dollar] as a 'billion-dollar mistake' `null` is one of the most dangerous thorns in a programmers toolbox. For example, every time a programmer wishes to `malloc` they must check for the pointer to be a `null`, libraries return it often without forewarning, and it can appear in hard to debug situations during data races. This all happens implicitly, the author of the code must keep all of the information about the system in their head. Worse, the consequences for making a mistake could be dramatic in lower level code. Segfaults, deadlocks, and system failure are all very real possibilities when exploring complex OS code. What's more is that all of these errors happen at *runtime* and may take down live systems, causing financial loss, destruction of property, or even loss of life.
 
-In languages like C, C++, and Java a tremendous amount of research and development time has gone into developing products like Coverity (@coverity) and PVS-Studio (@pvs-studio) to help discover possible null pointer consistencies. Engler et al (@deviant) suggest heuristic methods are used to determine the 'null state' of a variable throughout the control flow of a program. What if programmers could just stop worrying about `null` all together?
+In languages like C, C++, and Java a tremendous amount of research and development time has gone into developing products like Coverity [@coverity] and PVS-Studio [@pvs-studio] to help discover possible null pointer consistencies. Engler et al [@deviant] suggest heuristic methods are used to determine the 'null state' of a variable throughout the control flow of a program. What if programmers could just stop worrying about `null` all together?
 
 Many functional languages like Haskell and F# have the concept of an `Option`, a concept that Rust shares. Instead of needing to be aware of and check for `null` at every occurrence, the language semantics require the programmer to explicitly decide on the control flow for all values. It is common for newcomers to the language to dislike the "noise" this brings to the code, but once they understand the benefits of this design choice, and the ways to work with it, these complaints tend fade.
 
@@ -314,7 +314,7 @@ let mapped = maybe_foo.map(|x| x as f64);
 
 # Results and `try!()`
 
-When working with traditional languages such as C and C++ it can often be difficult to answer the question "Can this function fail?" Checked exceptions can help, but often APIs are inconsistent, and checks for failure can be forgotten. (@deviant) Some static analysis techniques can be used to determine possible missed failure checks, such has detecting invocations that do check for error. Having failure information included in the function's signature and requiring to to be explicitly checked may be a more robust solution over heuristics though.
+When working with traditional languages such as C and C++ it can often be difficult to answer the question "Can this function fail?" Checked exceptions can help, but often APIs are inconsistent, and checks for failure can be forgotten. [@deviant] Some static analysis techniques can be used to determine possible missed failure checks, such has detecting invocations that do check for error. Having failure information included in the function's signature and requiring to to be explicitly checked may be a more robust solution over heuristics though.
 
 The `Result<T, E>` enum exists as either `Ok(T)` or `Err(E)` and conveys the result of something which may fail with an error. Overall this type feels like an `Option<T>` as above, and is interacted with in largely the same way except that the `Err(E)` variant contains an error type which details information about the error. Using Rust's `match` expression the user can act on various error conditions or success.
 
@@ -393,11 +393,11 @@ fn main() {
 } // foo is destroyed.
 ```
 
-This behavior is very similar to C++'s RAII facilities and ensures all values are safely destructed in a consistent, predictable way as soon as they are no longer needed. The programmer does not need to worry about making sure each of their `malloc()` calls have a corresponding `free()` or rely on an outside tool (@deviant) to discover such errors. The borrow checker is also able to determine when a value has been *moved* into a function call and should not be further used in the caller, eliminating another possible class of errors.
+This behavior is very similar to C++'s RAII facilities and ensures all values are safely destructed in a consistent, predictable way as soon as they are no longer needed. The programmer does not need to worry about making sure each of their `malloc()` calls have a corresponding `free()` or rely on an outside tool [@deviant] to discover such errors. The borrow checker is also able to determine when a value has been *moved* into a function call and should not be further used in the caller, eliminating another possible class of errors.
 
 # Traits: Zero-cost Abstractions
 
-Unlike many common languages today Rust does not use a class based or inheritance based system. Data is stored in `struct`s, primitives, or `enum`s which implement a set of traits that define how it interacts and which functions are available to it. To someone familiar with Java or C++, traits may feel like interfaces. For example, the `File` is a `struct` which implements `Read` and `Write` among other traits. Other structures like `TcpStream` and `UdpSocket` also implement the same `Read` and `Write` trait. Traits are zero-cost abstractions that act to encourage common interfaces and capabilities between like-structures. (@abstraction)
+Unlike many common languages today Rust does not use a class based or inheritance based system. Data is stored in `struct`s, primitives, or `enum`s which implement a set of traits that define how it interacts and which functions are available to it. To someone familiar with Java or C++, traits may feel like interfaces. For example, the `File` is a `struct` which implements `Read` and `Write` among other traits. Other structures like `TcpStream` and `UdpSocket` also implement the same `Read` and `Write` trait. Traits are zero-cost abstractions that act to encourage common interfaces and capabilities between like-structures. [@abstraction]
 
 ```rust
 struct Thing {
@@ -420,13 +420,13 @@ This notion of composable traits aligns much more closely with the UNIX philosop
 
 # Static Analysis at the Core
 
-Static analysis tools, like `splint` for C (@splint) are an invaluable tool for Operating Systems programming, particularly when working on large codebases with multiple programmers. These tools accomplish in-depth analysis of source code and attempt to derive information from the code to understand where potential mistakes or errors may have occurred. For languages like C they all have one big problem:
+Static analysis tools, like `splint` for C [@splint] are an invaluable tool for Operating Systems programming, particularly when working on large codebases with multiple programmers. These tools accomplish in-depth analysis of source code and attempt to derive information from the code to understand where potential mistakes or errors may have occurred. For languages like C they all have one big problem:
 
 > C wasn't designed for static analysis.
 
-Rust's type system and region based memory, based off the ideas of Cyclone (@region-cyclone), are particularly well suited to static analysis. Indeed, `rustc` itself performs a tremendous amount of static analysis without the help of external tools. The type system carries all the information necessary for the compiler to understand all possible control flows of the program, all possible (recoverable) errors which arise, and the lifetimes of each region of memory.
+Rust's type system and region based memory, based off the ideas of Cyclone [@region-cyclone], are particularly well suited to static analysis. Indeed, `rustc` itself performs a tremendous amount of static analysis without the help of external tools. The type system carries all the information necessary for the compiler to understand all possible control flows of the program, all possible (recoverable) errors which arise, and the lifetimes of each region of memory.
 
-Of particular interest is `rustc`'s "Borrow Checker" which analyzes and understands the pointer system (detailed above) and is able to verify data safety, even across multiple threads. The borrow checker is an area of active research (@patina) and has thus far proven itself sound.
+Of particular interest is `rustc`'s "Borrow Checker" which analyzes and understands the pointer system (detailed above) and is able to verify data safety, even across multiple threads. The borrow checker is an area of active research [@patina] and has thus far proven itself sound.
 
 As a result of the static analysis done by `rustc` it is able to infer information about (but not limited to):
 
@@ -442,7 +442,7 @@ As a result of the static analysis done by `rustc` it is able to infer informati
 
 Threading is perhaps one of the most powerful and robust features of Rust. The characteristics detailed above culminate in a sort of *tour de force* when used bravely in a threaded context.
 
-Harnessing the power of ownership semantics, the type system, the standard library's threading modules there are a number of tools (@fearless-concurrency):
+Harnessing the power of ownership semantics, the type system, the standard library's threading modules there are a number of tools [@fearless-concurrency]:
 
 **Channels** provide a way to transfer messages (and ownership) between threads without fear of there being later (unsafe) access to the data by other threads. The vanilla channel provided by the standard library is a Multiple-Producer, Single-Consumer channel.
 
@@ -451,7 +451,7 @@ use std::sync::mpsc::{channel, Sender, Receiver};
 let (send, recieve) = channel();
 ```
 
-**Locks** can encapsulate data such that it can only be accessed if the lock is held. In Rust, you **don't lock code, you lock data**, and it is safer because of it. Locks are typically represented by `Mutex`s and shared between threads with an Atomically Reference Counted structure (`Arc`). It should be noted that this design of locking data prevents a lock from being required and never given up, a common mistake. (@deviant)
+**Locks** can encapsulate data such that it can only be accessed if the lock is held. In Rust, you **don't lock code, you lock data**, and it is safer because of it. Locks are typically represented by `Mutex`s and shared between threads with an Atomically Reference Counted structure (`Arc`). It should be noted that this design of locking data prevents a lock from being required and never given up, a common mistake. [@deviant]
 
 ```rust
 use std::sync::{Arc, Mutex};
@@ -515,21 +515,21 @@ fn test_fails() {
 }
 ```
 
-Having a standardized, high quality documentation format is invaluable for programmers, and Rust facilitates this. Documentation comments are can be placed anywhere in the code using `///` for function level documentation or `//!` for module level documentation. Documentation is in a common markdown format, code samples included in the documentation are automatically processed as unit tests. Generating documentation is done by `cargo doc`, which generates HTML and manpage documentation. Many Rust projects even go so far as to automate the unit testing and documentation generation step and hook it into their git commits (@travis-docs).
+Having a standardized, high quality documentation format is invaluable for programmers, and Rust facilitates this. Documentation comments are can be placed anywhere in the code using `///` for function level documentation or `//!` for module level documentation. Documentation is in a common markdown format, code samples included in the documentation are automatically processed as unit tests. Generating documentation is done by `cargo doc`, which generates HTML and manpage documentation. Many Rust projects even go so far as to automate the unit testing and documentation generation step and hook it into their git commits [@travis-docs].
 
 # Research
 
-Rust is born of strong research. It is strongly founded on a set of well reasoned, influential [papers](https://doc.rust-lang.org/nightly/book/academic-research.html) (@rust-research). The language was originally developed by Graydon Hoare and is MIT licensed. There has been over 1017 contributors to the project, including significant contributions by Mozilla Research, Samsung Research, and Tilde.
+Rust is born of strong research. It is strongly founded on a set of well reasoned, influential [papers](https://doc.rust-lang.org/nightly/book/academic-research.html) [@rust-research]. The language was originally developed by Graydon Hoare and is MIT licensed. There has been over 1017 contributors to the project, including significant contributions by Mozilla Research, Samsung Research, and Tilde.
 
-There are active researchers working on Rust and the language is rolling forward on a 6 week schedule, but all code compatible with current versions of Rust will be compatible with Rust until version 2.0 (@compatability). This schedule is the same as Mozilla's highly successful Firefox model (@release-schedule) and follows the semantic version scheme (@semantic-versioning). This makes the language a target for active feature and fix development, since it releases often, while keeping it stable for industrial use.
+There are active researchers working on Rust and the language is rolling forward on a 6 week schedule, but all code compatible with current versions of Rust will be compatible with Rust until version 2.0 [@compatability]. This schedule is the same as Mozilla's highly successful Firefox model [@release-schedule] and follows the semantic version scheme [@semantic-versioning]. This makes the language a target for active feature and fix development, since it releases often, while keeping it stable for industrial use.
 
 # Community
 
 One of the biggest dangers in choosing a language that "Is not C" to teach operating systems in is that it can be very difficult for students to get help. There is very little operating systems development in languages like Python, C#, or Java and what does exist is often rather exotic, especially compared to the extremely well documented C problems that crop up.
 
-Mozilla's IRC network hosts the popular #rust channel which regularly has over 800 members at any given time. [`crates.io`](http://crates.io/) hosts over 2300 'crates', Rust's nickname for a package. The language reached 1.0 on May 15, 2015 (@rust-release) and has been in development since 2006. The community is active and friendly with special interest groups hosting their own channels for various purposes. There are a number of active article feeds and active discussion on [Stack Overflow](https://stackoverflow.com/questions/tagged/rust). (@rust-stackoverflow)
+Mozilla's IRC network hosts the popular #rust channel which regularly has over 800 members at any given time. [`crates.io`](http://crates.io/) hosts over 2300 'crates', Rust's nickname for a package. The language reached 1.0 on May 15, 2015 [@rust-release] and has been in development since 2006. The community is active and friendly with special interest groups hosting their own channels for various purposes. There are a number of active article feeds and active discussion on [Stack Overflow](https://stackoverflow.com/questions/tagged/rust). [@rust-stackoverflow]
 
-Best of all, there is active operating system development in Rust. There is a project to develop `coreutils` (@coreutils), a kernel (@rust-boot), operating systems (@reenix), and embedded system platforms (@zinc). At the time of writing, these projects are young enough that students could even contribute components upstream.
+Best of all, there is active operating system development in Rust. There is a project to develop `coreutils` [@coreutils], a kernel [@rust-boot], operating systems [@reenix], and embedded system platforms [@zinc]. At the time of writing, these projects are young enough that students could even contribute components upstream.
 
 # Future Work
 
