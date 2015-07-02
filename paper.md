@@ -375,7 +375,7 @@ It accomplishes these features through a number of novel techniques largely buil
 
 ## Rust Basics
 
-To someone familiar with C/C++ the syntax of Rust will appear reasonably familiar. Rust differs in many ways though, believing in that it is better to be explicit and promote understanding of what is occurring, than to expect the programmer to maintain all of this information in their head and engage in guesswork. 
+To someone familiar with C/C++ the syntax of Rust will appear reasonably familiar. Rust differs in many ways though, believing in that it is better to be explicit and promote understanding of what is occurring, than to expect the programmer to maintain all of this information in their head and engage in guesswork.
 
 This is a key motivating factor behind our proposed adoption of Rust in OS courses, we believe this quality does not do away with conciseness or elegance of code. Community members have developed bindings for well-known tools like Redis [@redis] and found the APIs for equivalent Rust and Python actions of relatively similar "feel", despite the benefits of Rust's type system providing an additional safety net [@redis-api].
 
@@ -555,15 +555,13 @@ Rust's type system and region based memory, based off the ideas of Cyclone [@reg
 
 Of particular interest is `rustc`'s "Borrow Checker" which analyzes and understands the pointer system and is able to verify data safety, even across multiple threads. The borrow checker is an area of active research [@patina] and has thus far proven itself sound.
 
-As a result of the static analysis done by `rustc` it is able to infer information about (but not limited to):
+As a result of the static analysis done by `rustc` it is able to infer information about (but is not limited to):
 
-* Unused variables and functions.
+* Unused results, variables and functions.
 * Unreachable code.
 * Unsafe pointer sharing (multiple mutable pointers.)
-* Unused `Result`s.
-* Incorrect type matching.
-* Lossy casts.
-* Use after free errors.
+* Incorrect type matching and lossy casts.
+* Use-after-free errors.
 * Unclear lifetimes (asking for either clarity or refactoring.)
 
 # Threads that don't Bite
@@ -598,9 +596,6 @@ use std::marker::Send;
 Other, more fearless forms of concurrency such as **sharing stack frames** is even encouraged by these models. This is done via a scoped thread model.
 
 ```rust
-#![feature(scoped)]
-use std::thread;
-
 fn main() {
     let items = vec![1, 2, 3];
     let mut guards = vec![];
