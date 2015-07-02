@@ -655,6 +655,6 @@ Best of all, there is active operating system development in Rust. There is a pr
 
 # Conclusion and Future Work
 
-In this work we have overviewed some of the reasons to consider Rust as the lanugage for a new generation of systems programmers by considering it's impact on classic bugs.  There is a considerable amount of research remaining regarding Rust's uses in systems code and programming in the large in general. We seek to foster knowledge of the language at the University of Victoria and are working on developing distributed consensus algorithms like Raft and next generation initialization systems in the spirit of OpenRC.
+In this work we have overviewed some of the reasons to consider Rust as the lanugage for a new generation of systems programmers by highlighting precisely how it can be used to avoid classic bugs.  There is a considerable amount of research remaining regarding Rust's uses in systems code and programming in the large in general. We seek to foster knowledge of the language at the University of Victoria and are working on developing distributed consensus algorithms like Raft and next generation initialization systems in the spirit of OpenRC.
 
 # References
