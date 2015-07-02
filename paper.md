@@ -349,7 +349,7 @@ On top of the complexity, the ambiguity of language features means that year aft
 * Does lock `L` protect `V`?
 
 
-This short paper demonstrates precisely how Rust addresses these potential bugs in a clear, clean, safe and robust manner. After introducing Rust (Section 2), we will discuss how Rust approaches and helps solve to these common bug categories. In Rust, routines with the potential for failure carry it explicitly in their function signature (Section 3), RAII is used to ensure allocations are followed by frees (Section 4), security checks can be required by the type system or through marker traits for 'tainted' data (Section 5), powerful move semantics eliminate use-after-free errors (Section 6), and locks inherently protect data, not code (Section 7). We also discuss the goals of "Safety" Rust (Section 8) state of tooling (Section 9), community (Section 9), and research (Section 10) in Rust.
+This short paper demonstrates precisely how Rust addresses these potential bugs in a clear, clean, safe and robust manner. After introducing Rust (Section 2), we discuss how Rust approaches and helps solve to these common bug categories. In Rust, routines with the potential for failure carry it explicitly in their function signature (Section 3), RAII is used to ensure allocations are followed by frees (Section 4), security checks can be required by the type system or through marker traits for 'tainted' data (Section 5), powerful move semantics eliminate use-after-free errors (Section 6), and locks inherently protect data, not code (Section 7). We also discuss the goals of "Safety" Rust (Section 8) state of tooling (Section 9), community (Section 9), and research (Section 10) in Rust.
 
 
 # Introducing Rust
@@ -371,7 +371,7 @@ Rust offers a robust set of desirable features for systems code:
 * Efficient C bindings
 * Robust static analysis
 
-It accomplishes these features through a number of novel features largely built off its type system and the borrow checker. Both will be covered below. The Rust community has been working to firmly position Rust as a powerful tool for programming in ultra-large, [@uls], embedded, and networking systems.
+It accomplishes these features through a number of novel techniques largely built off its type system and the borrow checker. The Rust community has been working to firmly position Rust as a powerful tool for programming in ultra-large, [@uls], embedded, and networking systems.
 
 ## Rust Basics
 
@@ -389,7 +389,7 @@ The only quality of the above code which may be at all suprising to programmers 
 
 This quality does not do away with conciseness or elegance of code. Community members have developed bindings for well-known tools like Redis [@redis] and found the APIs for equivalent Rust and Python actions of relatively similar "feel", despite the benefits of Rust's type system providing an additional safety net [@redis-api].
 
-Rust does, however, have significant semantic differences compared to C-like languages. For variable declaration, Rust has the `let` keyword which is *immutable by default*, mutability is opt-in via `let mut`. This opt-in mutability was found by the community to encourage better code. Instead of the programmer needing to remember to use `const` the compiler patiently informs them of any variables they might have forgotten to make mutable, and encourages them to evaluate if the variable does indeed need to be mutable, or if it is unnecessarily mutable.
+Rust does, however, have significant semantic differences compared to C-like languages. For variable declaration, Rust has the `let` keyword which is *immutable by default*, mutability is opt-in via `let mut`. This opt-in mutability was found by the community to encourage better code. Instead of the programmer needing to remember to use `const` the compiler informs them of any variables they might have forgotten to make mutable or if it is unnecessarily mutable.
 
 As well, function definitions differ from C-like languages. This change makes function definitions easier to comprehend when dealing with complex parameters, generics, and return values. Numerous reasoning for why C's declaration syntax is inadequate were well explained by Rob Pike [@go-fn].
 
@@ -408,7 +408,7 @@ While a dynamic type system is desirable in some areas, particularly in higher l
 
 The programmer is not *prevented* from doing these things in Rust, it only ensures that it is actually the intended action. The correct way to get the address of a value (and store it as a separate value) in Rust is `&foo as *const _ as usize;`. For many students though, attempting to cast pointers into a value is actually a mistake in their intention. Rust helps users with this by automatically dereferencing pointers when necessary, and providing stronger tools for common places where these mistakes crop up, like string indexing or dynamic array access.
 
-Types can be created easily, and there are three basic compound data structures, `struct`, `enum`, and tuples. `struct`s and tuples are similar to other languages. Unlike other languages, Rust's `enum`s are much more powerful and interesting, able to represent variants with encapsulated values, generics, and even `struct`s!
+Types can be created easily, and there are three basic compound data structures, `struct`, `enum`, and tuples. `struct`s and tuples are similar to other languages. Rust's `enum`s are able to represent variants with encapsulated values, generics, and even `struct`s!
 
 ```rust
 // Structure with generic
@@ -431,9 +431,9 @@ enum Three {
 
 ## We Don't Need A `null`
 
-Cited by its creator [@billion-dollar] as a 'billion-dollar mistake' `null` is one of the most dangerous thorns in a programmers toolbox. For example, every time a programmer wishes to `malloc` they must check for the pointer to be a `null`, libraries return it often without forewarning, and it can appear in hard to debug situations during data races. This all happens implicitly, the author of the code must keep all of the information about the system in their head. Worse, the consequences for making a mistake could be dramatic in lower level code. Segfaults, deadlocks, and system failure are all very real possibilities when exploring complex OS code. What's more is that all of these errors happen at *runtime* and may take down live systems, causing financial loss, destruction of property, or even loss of life.
+Cited by its creator [@billion-dollar] as a 'billion-dollar mistake' `null` is one of the most dangerous thorns in a programmers toolbox. What's more is that these errors happen at *runtime* and may take down live systems.
 
-In languages like C, C++, and Java a tremendous amount of research and development time has gone into developing products like Coverity [@coverity] and PVS-Studio [@pvs-studio] to help discover possible null pointer inconsistencies. Engler et al [@deviant] suggest heuristic methods are used to determine the 'null state' of a variable throughout the control flow of a program. What if programmers could just stop worrying about `null` all together?
+In languages like C, C++, and Java a tremendous amount of research and development time has gone into developing products like Coverity [@coverity] and PVS-Studio [@pvs-studio] to help discover possible null pointer inconsistencies. Engler et al suggest heuristic methods to determine the 'null state' of a variable throughout the control flow of a program. What if programmers could just stop worrying about `null` all together?
 
 Many functional languages like Haskell and F# have the concept of an `Option`, a concept that Rust shares. Instead of needing to be aware of and check for `null` at every occurrence, the language semantics require the programmer to explicitly decide on the control flow for all values. It is common for newcomers to the language to dislike the "noise" this brings to the code, but once they understand the benefits of this design choice, and the ways to work with it, these complaints tend fade. Taking cues from functional languages such as Haskell and F#, Rust defines an `Option<T>` to enum to represent 'nullable' types. In Rust the `Option<T>` enum exists as either a `Some(T)` or a `None` (the equivalent of a `null`). Rust provides a number of techniques for working with this type. First, is the simple "just crash if it doesn't work" call `.unwrap()`, then there is `.unwrap_or(some_default)`. As well there are functions like `.is_some()` and `.is_none()` which function as expected. It is also possible work work with an optional value without unwrapping it via `.map()`. It is very common to utilize Rust's `match` expression to handle control flow and unwrap enumerated values.
 
@@ -454,7 +454,7 @@ let mapped = maybe_foo.map(|x| x as f64);
 
 # Results and `try!()`
 
-When working with traditional languages such as C and C++ it can often be difficult to answer the question "Can this function fail?" Checked exceptions can help, but often APIs are inconsistent, and checks for failure can be forgotten. [@deviant] Some static analysis techniques can be used to determine possible missed failure checks, such has detecting invocations that do check for error. Having failure information included in the function's signature and requiring to to be explicitly checked may be a more robust solution over heuristics though.
+When working with traditional languages such as C and C++ it can often be difficult to answer the question "Can this function fail?" Checked exceptions can help, but often APIs are inconsistent, and checks for failure can be forgotten [@deviant]. Some static analysis techniques can be used to determine possible missed failure checks, such has detecting invocations that do check for error. Having failure information included in the function's signature and requiring it to be explicitly checked may be a more robust solution over heuristics though.
 
 The `Result<T, E>` enum exists as either `Ok(T)` or `Err(E)` and conveys the result of something which may fail with an error. Overall this type feels like an `Option<T>` as above, and is interacted with in largely the same way except that the `Err(E)` variant contains an error type which details information about the error. Using Rust's `match` expression the user can act on various error conditions or success.
 
@@ -536,7 +536,7 @@ This behavior is very similar to C++'s RAII facilities and ensures all values ar
 
 # Traits: Zero-cost Abstractions
 
-Unlike many common languages today Rust does not use a class based or inheritance based system. Data is stored in `struct`s, primitives, or `enum`s which implement a set of traits that define how it interacts and which functions are available to it. For example, the `File` is a `struct` which implements `Read` and `Write` among other traits. Other structures like `TcpStream` and `UdpSocket` also implement the same `Read` and `Write` trait. Traits are zero-cost abstractions that act to encourage common interfaces and capabilities between like-structures. [@abstraction]
+Rust does not use a class based or inheritance based system. Data is stored in `struct`s, primitives, or `enum`s which implement a set of traits that define how it interacts and which functions are available to it. For example, the `File` is a `struct` which implements `Read` and `Write` among other traits. Other structures like `TcpStream` and `UdpSocket` also implement the same `Read` and `Write` trait. Traits are zero-cost abstractions that act to encourage common interfaces and capabilities between like-structures [@abstraction].
 
 ```rust
 struct Thing {
@@ -559,13 +559,11 @@ Traits fit easily together, are widespread in their implementation, and allow fo
 
 # Static Analysis at the Core
 
-Static analysis tools, like `splint` for C [@splint] are an invaluable tool for Operating Systems programming, particularly when working on large codebases with multiple programmers. These tools accomplish in-depth analysis of source code and attempt to derive information from the code to understand where potential mistakes or errors may have occurred. For languages like C they all have one big problem:
-
-> C wasn't designed for static analysis.
+Static analysis tools, like `splint` for C [@splint] are an invaluable tool for Operating Systems programming, particularly when working on large codebases with multiple programmers.
 
 Rust's type system and region based memory, based off the ideas of Cyclone [@region-cyclone], are particularly well suited to static analysis. Indeed, `rustc` itself performs a tremendous amount of static analysis without the help of external tools. The type system carries all the information necessary for the compiler to understand all possible control flows of the program, all possible (recoverable) errors which arise, and the lifetimes of each region of memory.
 
-Of particular interest is `rustc`'s "Borrow Checker" which analyzes and understands the pointer system (detailed above) and is able to verify data safety, even across multiple threads. The borrow checker is an area of active research [@patina] and has thus far proven itself sound.
+Of particular interest is `rustc`'s "Borrow Checker" which analyzes and understands the pointer system and is able to verify data safety, even across multiple threads. The borrow checker is an area of active research [@patina] and has thus far proven itself sound.
 
 As a result of the static analysis done by `rustc` it is able to infer information about (but not limited to):
 
