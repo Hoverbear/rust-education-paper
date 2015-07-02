@@ -3,11 +3,8 @@ title: Understanding Over Guesswork
 subtitle: Bugs as Linguistic Deficiencies
 author:
   - name: Andrew Hobden
-    affiliation: 1
   - name: Yvonne Coady
-    affiliation: 1
 address:
-  - code: 1
     address: Computer Science, University of Victoria
 tags: [Education, Rust, Operating Systems]
 abstract: |
@@ -337,15 +334,13 @@ references:
       day: 30
 ---
 
-# The State of the OS Course
+# Introduction
 
 Concurrency, parallelism, memory management, process scheduling, deadlocks, mutexes, system calls, filesystems, and architectural considerations are all commonly taught concepts in Operating Systems courses. These topics can be a struggle to understand, even for determined students, due to their complex, low-level characteristics. Students are typically asked to use C or C++ to accomplish assignments on the above tasks and it is usually one of their first few courses with the language.
 
 Instructors may also find themselves struggling, as these assignments can be difficult to create, and at times nearly impossible to evaluate effectively. Instructors and their markers desire assignments which are simple enough to fit into a few files, demonstrate understanding of failure modes, can be tested effectively in an automated fashion, and show students the caveats of their attempts to solve the problem. In many cases, a trade-off is necessary. For example, building an interactive shell is a common, and much loved, assignment in which instructors must balance the number of features required with the time provided. Features such as pipes, background tasks, tab-completion, and environment variables are all desirable and interesting to implement, but contribute greatly to the complexity of the code, as well as the amount of time it takes to evaluate.
 
-On top of the complexity, the ambiguity of language features means that year after year every set of students hit the same bugs, at least eventually.  
-
-Engler et al identified a number of problem classes in their work in static analysis that offer students and professionals alike stumbling blocks, particularly when working with systems code like C [@deviant]. They are namely:
+On top of the complexity, the ambiguity of language features means that year after year every set of new students hit the same old bugs---eventually.  Engler et al [@deviant] identified a number of problem classes in their work in static analysis that offer students and professionals alike stumbling blocks, particularly when working with systems code like C. They are namely:
 
 * Can routine `F` fail?
 * Must `A` be paired with `B`?
