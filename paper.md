@@ -8,8 +8,7 @@ address:
     address: Computer Science, University of Victoria
 tags: [Education, Rust, Operating Systems]
 abstract: |
-    Some bugs are just that---a one off.  A wayward moth that just happens to be innocently fluttering through the wrong relay at the wrong time.  But some kinds of bugs aren't like that.  Instead, they have risen to superstar status, plaguing veterans and newcomers alike.
-    But what if these aren't bugs at all?  What if they are actual deficiencies in safety and robustness offered by the C programming language as a consequence of the degree to which guesswork is introduced.  Here we explore a more explicit approach to systems level programming supported by Rust, which we believe will better promote understanding of design intent, and eliminate some of the guesswork.  Guided by a set of classic, but still relevant, bugs identified almost 15 years ago by Engler, we consider this in the context of the new generation of students learning about systems in a typical OS course, where students often first encounter these deficiencies.   
+    Some bugs are just that---a one off.  A wayward moth that just happens to be innocently fluttering through the wrong relay at the wrong time.  But some kinds of bugs aren't like that.  Instead, they have risen to superstar status, plaguing veterans and newcomers alike.  But what if these aren't bugs at all?  What if they are actual deficiencies in safety and robustness offered by the C programming language as a consequence of the degree to which guesswork is introduced.  Here we explore a more explicit approach to systems level programming supported by Rust, which we believe will better promote understanding of design intent, and eliminate some of the guesswork.  Guided by a set of classic, but still relevant, bugs identified almost 15 years ago by Engler, we consider this in the context of the new generation of students learning about systems in a typical OS course, where students often first encounter these deficiencies.   
 references:
   - id: rust
     title: Rust
@@ -349,10 +348,8 @@ On top of the complexity, the ambiguity of language features means that year aft
 * Does lock `L` protect `V`?
 
 
-This short paper demonstrates precisely how Rust addresses these potential bugs in a clear, clean, safe and robust manner. After introducing Rust (Section 2), we discuss how Rust approaches and helps solve to these common bug categories (Section 3). We also discuss the goals of "Safety", the state of tooling, and the Rust community (Section 4), before closing with Future Work (Section 5).
+In this short paper we demonstrate precisely how Rust addresses these potential bugs in a clear, clean, safe and robust manner. After introducing Rust (Section 2), we discuss how Rust approaches and helps solve to these common bug categories (Section 3). We also discuss the goals of "Safety", the state of tooling, and the Rust community (Section 4), before closing with Future Work (Section 5).
 
-
-We also discuss the goals of "Safety" Rust (Section 8) state of tooling (Section 9), and the Rust community (Section 10).
 
 
 # Introducing Rust
@@ -558,9 +555,7 @@ Traits fit easily together, are widespread in their implementation, and allow fo
 
 Static analysis tools, like `splint` for C [@splint] are an invaluable tool for Operating Systems programming, particularly when working on large codebases with multiple programmers.  Rust's type system and region based memory, based on Cyclone [@region-cyclone], are particularly well suited to static analysis. Indeed, `rustc` itself performs a tremendous amount of static analysis without the help of external tools. The type system carries all the information necessary for the compiler to understand all possible control flows of the program, all possible (recoverable) errors which arise, and the lifetimes of each region of memory.
 
-Of particular interest is `rustc`'s "Borrow Checker" which analyzes and understands the pointer system and is able to verify data safety, even across multiple threads. The borrow checker is an area of active research [@patina].
-
-As a result of the static analysis done by `rustc` it is able to infer information about (but is not limited to):
+Of particular interest is `rustc`'s "Borrow Checker" which analyzes and understands the pointer system and is able to verify data safety, even across multiple threads. The borrow checker is an area of active research [@patina].  As a result of the static analysis done by `rustc` it is able to infer information about (but is not limited to):
 
 * Unused results, variables and functions.
 * Unreachable code.
@@ -621,7 +616,7 @@ The concept of "Safety" in code is often poorly defined, but can be considered i
 * **Memory Safety** reduces or eliminates the possibility of mistakes like writing a 64 bit value into a 32 bit space (overwriting unintended data), or multi-threaded mutable access to the same memory. Rust's borrow checker effectively eliminates data races in safe code and strong type safety prevents unintended clobbering.
 * **Thread Safety** prevents inter-thread race conditions, such as one thread exiting when another thread is waiting on data from it. Rust provides some robust tools for managing thread pools integrated into its type system, however some mistakes are still possible if the programmer works hard enough to accomplish them.
 
-Rust advertises both type safety and data safety. There is still research and development to be done before it can be truly  thread-safe.
+Rust advertises both type safety and data safety. There is still research and development to be done before it can truly be considered thread-safe.
 
 ## Tooling
 
@@ -647,14 +642,12 @@ Having a standardized, high quality documentation format is invaluable for progr
 
 ## Community
 
-One of the biggest dangers in choosing a language that "Is not C" to teach operating systems in is that it can be very difficult for students to get help.
-
-Mozilla's IRC network hosts the popular #rust channel which regularly has over 800 members at any given time. [`crates.io`](http://crates.io/) hosts over 2300 packages. The language reached 1.0 on May 15, 2015 [@rust-release] and has been in development since 2006. The community is active and friendly with a variety special interest groups.
+One of the biggest dangers in choosing a language that "Is not C" to teach operating systems in is that it can be very difficult for students to get help.  Mozilla's IRC network hosts the popular #rust channel which regularly has over 800 members at any given time. [`crates.io`](http://crates.io/) hosts over 2300 packages. The language reached 1.0 on May 15, 2015 [@rust-release] and has been in development since 2006. The community is active and friendly with a variety special interest groups.
 
 Best of all, there is active operating system development in Rust. There is a project to develop `coreutils` [@coreutils], a kernel [@rust-boot], operating systems [@reenix], and embedded system platforms [@zinc]. At the time of writing, these projects are young enough that students could even contribute components upstream.
 
 # Conclusion and Future Work
 
-In this work we have overviewed some of the reasons to consider Rust as the lanugage for a new generation of systems programmers by highlighting precisely how it can be used to avoid classic bugs.  There is a considerable amount of research remaining regarding Rust's uses in systems code and programming in the large in general. We seek to foster knowledge of the language at the University of Victoria and are working on developing distributed consensus algorithms like Raft and next generation initialization systems in the spirit of OpenRC.
+In this work we have overviewed some of the reasons to consider Rust as the lanugage for a new generation of systems programmers by highlighting precisely how Rust prevents classic bugs.  There is a considerable amount of research remaining regarding Rust's uses in systems code and programming in the large in general. We seek to foster knowledge of the language at the University of Victoria and are working on developing distributed consensus algorithms like Raft and next generation initialization systems in the spirit of OpenRC.
 
 # References
