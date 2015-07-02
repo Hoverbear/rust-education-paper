@@ -8,8 +8,8 @@ address:
     address: Computer Science, University of Victoria
 tags: [Education, Rust, Operating Systems]
 abstract: |
-    Some bugs are just that --- a one off.  A wayward moth that just happens to be innocently fluttering through the wrong relay at the wrong time.  But some kinds of bugs aren't like that.  Instead, they have risen to superstar popularity, plaguing veterans and newcomers alike.
-    But what if these aren't bugs at all?  What if they are actual deficiencies in safety and robustness offered by the C programming language as a consequence of the degree to which guesswork is introduced.  Here we explore a more explicit approach to systems level programming supported by Rust, which we believe will better promote understanding of design intent, and eliminate some of the guesswork.  We consider this in the context of an offering of a typical OS course, where students often first encounter these deficiencies, and in light of the classic bugs identified almost 15 years ago by Engler.  
+    Some bugs are just that---a one off.  A wayward moth that just happens to be innocently fluttering through the wrong relay at the wrong time.  But some kinds of bugs aren't like that.  Instead, they have risen to superstar status, plaguing veterans and newcomers alike.
+    But what if these aren't bugs at all?  What if they are actual deficiencies in safety and robustness offered by the C programming language as a consequence of the degree to which guesswork is introduced.  Here we explore a more explicit approach to systems level programming supported by Rust, which we believe will better promote understanding of design intent, and eliminate some of the guesswork.  Guided by a set of classic, but still relevant, bugs identified almost 15 years ago by Engler, we consider this in the context of the new generation of students learning about systems in a typical OS course, where students often first encounter these deficiencies.   
 references:
   - id: rust
     title: Rust
@@ -349,7 +349,10 @@ On top of the complexity, the ambiguity of language features means that year aft
 * Does lock `L` protect `V`?
 
 
-This short paper demonstrates precisely how Rust addresses these potential bugs in a clear, clean, safe and robust manner. After introducing Rust (Section 2), we discuss how Rust approaches and helps solve to these common bug categories. In Rust, routines with the potential for failure carry it explicitly in their function signature (Section 3), RAII is used to ensure allocations are followed by frees (Section 4), security checks can be required by the type system or through marker traits for 'tainted' data (Section 5), powerful move semantics eliminate use-after-free errors (Section 6), and locks inherently protect data, not code (Section 7). We also discuss the goals of "Safety" Rust (Section 8) state of tooling (Section 9), and the Rust community (Section 10).
+This short paper demonstrates precisely how Rust addresses these potential bugs in a clear, clean, safe and robust manner. After introducing Rust (Section 2), we discuss how Rust approaches and helps solve to these common bug categories (Section 3). We also discuss the goals of "Safety", the state of tooling, and the Rust community (Section 4), before closing with Future Work (Section 5).
+
+
+We also discuss the goals of "Safety" Rust (Section 8) state of tooling (Section 9), and the Rust community (Section 10).
 
 
 # Introducing Rust
@@ -442,7 +445,11 @@ let matched = match maybe_foo {
 let mapped = maybe_foo.map(|x| x as f64);
 ```
 
-# Results and `try!()`
+# Rust: Reducing Bugs through Linguistic Features
+In Rust, many common bugs can be prevented because: routines with the potential for failure carry it explicitly in their function signature (Section 3.1), RAII is used to ensure allocations are followed by frees (Section 3.2), security checks can be required by the type system or through marker traits for 'tainted' data (Section 3.3), powerful move semantics eliminate use-after-free errors (Section 3.4), and locks inherently protect data, not code (Section 3.4). 
+
+
+## Results and `try!()`
 
 When working with traditional languages such as C and C++ it can often be difficult to answer the question "Can this function fail?" Checked exceptions can help, but often APIs are inconsistent, and checks for failure can be forgotten [@deviant]. Some static analysis techniques can be used to determine possible missed failure checks, such has detecting invocations that do check for error. Having failure information included in the function's signature and requiring it to be explicitly checked may be a more robust solution over heuristics though.
 
@@ -493,12 +500,12 @@ fn open_and_read() -> Result<String, MyError> {
 
 Error handling in Rust is explicit, composable, and sane. There are no exceptions, nulls, 'magic numbers' (like -1) or anything that may prevent the programmer from handling the error as *they* choose to, even if that is to simply `.unwrap()` it and fail. It's worth noting that even `.unwrap()`ing does not actually crash the program as normally it unwinds the stack, isolating failure to a single thread and preventing inconsistent state.
 
-# Borrow and Move: Forget `free()`
+## Borrow and Move: Forget `free()`
 
 In Rust there is the notion of moving, copying, and referencing. In some ways Rust's memory model
-is similar to C/C++'s. It features a powerful pointer system that allows programmers to make fine-grain, informed decisions about how values are stored, passed, and represented. Like C++, Rust makes use of a concept called Resource Acquisition is Instantiation (RAII). Rust goes a step further, introducing the distinction between *immutably borrowing* (`&`), *mutably borrowing* (`&mut`), *copying* (`Copy` trait), and *moving* values. At any given time there may be any number of *immutable borrows*, meanwhile there may only be one *mutable borrow*, and a value may not be used in the function once it has been *moved* out.
+is similar to C/C++'s. It features a powerful pointer system that allows programmers to make fine-grain, informed decisions about how values are stored, passed, and represented. Like C++, Rust makes use of a concept called Resource Acquisition Is Instantiation (RAII). Rust goes a step further, introducing the distinction between *immutably borrowing* (`&`), *mutably borrowing* (`&mut`), *copying* (`Copy` trait), and *moving* values. At any given time there may be any number of *immutable borrows*, meanwhile there may only be one *mutable borrow*, and a value may not be used in the function once it has been *moved* out.
 
-This makes it simple for a programmer to observe a function signature and determine which values the function may mutate or consume, and which it may return. Using this information the compiler is able to determine the lifetime constraints of almost any value without additional notations. In (rare, complex) cases where it does require additional information the programmer can annotate lifetimes just as they would generic type parameters.
+This makes it simple for a programmer to observe a function signature and determine which values the function may mutate or consume, and which it may return. Using this information the compiler is able to determine the lifetime constraints of almost any value without additional notations. In (rare, complex) cases where it does require additional information, the programmer can annotate lifetimes just as they would generic type parameters.
 
 ```rust
 fn main() {
@@ -522,9 +529,9 @@ fn main() {
 } // foo is destroyed.
 ```
 
-This behavior is very similar to C++'s RAII facilities and ensures all values are safely destructed in a consistent, predictable way as soon as they are no longer needed. The programmer does not need to worry about making sure each of their `malloc()` calls have a corresponding `free()` or rely on an outside tool [@deviant] to discover such errors. The borrow checker is also able to determine when a value has been *moved* into a function call and should not be further used in the caller, eliminating another possible class of errors.
+This behavior is very similar to C++'s RAII facilities and ensures all values are safely destructed in a consistent, predictable manner as soon as they are no longer needed. The programmer does not need to worry about making sure each of their `malloc()` calls have a corresponding `free()` or rely on an outside tool [@deviant] to discover such errors. The borrow checker is also able to determine when a value has been *moved* into a function call and should not be further used in the caller, eliminating another possible class of errors.
 
-# Traits: Zero-cost Abstractions
+## Traits: Zero-cost Abstractions
 
 Rust does not use a class based or inheritance based system. Data is stored in `struct`s, primitives, or `enum`s which implement a set of traits that define how it interacts and which functions are available to it. For example, the `File` is a `struct` which implements `Read` and `Write` among other traits. Other structures like `TcpStream` and `UdpSocket` also implement the same `Read` and `Write` trait. Traits are zero-cost abstractions that act to encourage common interfaces and capabilities between like-structures [@abstraction].
 
@@ -547,13 +554,11 @@ impl Foo for Thing {
 
 Traits fit easily together, are widespread in their implementation, and allow for common interfaces between modules to permit better adaptability. Traits can also be used as 'markers' in design patterns like state machines to provide additional compile time verification of correctness.
 
-# Static Analysis at the Core
+## Static Analysis at the Core
 
-Static analysis tools, like `splint` for C [@splint] are an invaluable tool for Operating Systems programming, particularly when working on large codebases with multiple programmers.
+Static analysis tools, like `splint` for C [@splint] are an invaluable tool for Operating Systems programming, particularly when working on large codebases with multiple programmers.  Rust's type system and region based memory, based on Cyclone [@region-cyclone], are particularly well suited to static analysis. Indeed, `rustc` itself performs a tremendous amount of static analysis without the help of external tools. The type system carries all the information necessary for the compiler to understand all possible control flows of the program, all possible (recoverable) errors which arise, and the lifetimes of each region of memory.
 
-Rust's type system and region based memory, based off the ideas of Cyclone [@region-cyclone], are particularly well suited to static analysis. Indeed, `rustc` itself performs a tremendous amount of static analysis without the help of external tools. The type system carries all the information necessary for the compiler to understand all possible control flows of the program, all possible (recoverable) errors which arise, and the lifetimes of each region of memory.
-
-Of particular interest is `rustc`'s "Borrow Checker" which analyzes and understands the pointer system and is able to verify data safety, even across multiple threads. The borrow checker is an area of active research [@patina] and has thus far proven itself sound.
+Of particular interest is `rustc`'s "Borrow Checker" which analyzes and understands the pointer system and is able to verify data safety, even across multiple threads. The borrow checker is an area of active research [@patina].
 
 As a result of the static analysis done by `rustc` it is able to infer information about (but is not limited to):
 
@@ -564,20 +569,20 @@ As a result of the static analysis done by `rustc` it is able to infer informati
 * Use-after-free errors.
 * Unclear lifetimes (asking for either clarity or refactoring.)
 
-# Threads that don't Bite
+## Threads that don't Bite
 
 Threading is perhaps one of the most powerful and robust features of Rust. The characteristics detailed above culminate in a sort of *tour de force* when used bravely in a threaded context.
 
-Harnessing the power of ownership semantics, the type system, the standard library's threading modules there are a number of tools [@fearless-concurrency]:
+Harnessing the power of ownership semantics, the type system, the standard library's threading modules there are a number of tools available [@fearless-concurrency]:
 
-**Channels** provide a way to transfer messages (and ownership) between threads without fear of there being later (unsafe) access to the data by other threads. The vanilla channel provided by the standard library is a Multiple-Producer, Single-Consumer channel.
+**Channels** provide a way to transfer messages (and ownership) between threads without fear of there being later (unsafe) access to the data by other threads. The default channel provided by the standard library is a Multiple-Producer, Single-Consumer channel.
 
 ```rust
 use std::sync::mpsc::{channel, Sender, Receiver};
 let (send, recieve) = channel();
 ```
 
-**Locks** can encapsulate data such that it can only be accessed if the lock is held. In Rust, you **don't lock code, you lock data**, and it is safer because of it. Locks are typically represented by `Mutex`s and shared between threads with an Atomically Reference Counted structure (`Arc`). It should be noted that this design of locking data prevents a lock from being required and never given up, a common mistake. [@deviant]
+**Locks** can encapsulate data such that access is only granted if the lock is held. In Rust, you **don't lock code, you lock data**, and it is safer because of it. Locks are typically represented by `Mutex`s and shared between threads with an Atomically Reference Counted structure (`Arc`). It should be noted that this design of locking data prevents a lock from being acquired and never given up, identified as common by Engler [@deviant].
 
 ```rust
 use std::sync::{Arc, Mutex};
@@ -608,19 +613,19 @@ fn main() {
 } // `guards` destroyed here, implicitly joining
 ```
 
-# Safety as a First-Class Goal
+# Safety, Tools, and Community
 
-The concept of "Safety" in code is often poorly defined. In general, safety can be broken down into three categories:
+The concept of "Safety" in code is often poorly defined, but can be considered in three categories:
 
-* **Type Safety** is the ability of a language to prevent or discourage type errors, such as treating a `float` like an `int`. Rust and languages like Haskell excel here as their type systems are strong, explicit (but often inferred), and do not include the notion of a `null` that can go anywhere indiscriminately.
-* **Memory Safety** is the ability of a language to reduce or eliminate the possibility of mistakes like writing a 64 bit value into a 32 bit space (overwriting unintended data), or multi-threaded mutable access to the same memory. Rust's borrow checker effectively eliminates data races in safe code and strong type safety prevents unintended clobbering.
-* **Thread Safety** is the ability of a language to prevent inter-thread race conditions, such as one thread exiting when another thread is waiting on data from it. Rust provides some robust tools for managing thread pools integrated into its type system, however some mistakes are still possible if the programmer works hard enough to accomplish them.
+* **Type Safety** prevents or discourages type errors, such as treating a `float` like an `int`. Rust and languages like Haskell excel here as their type systems are strong, explicit (but often inferred), and do not include the notion of a `null` that can go anywhere indiscriminately.
+* **Memory Safety** reduces or eliminates the possibility of mistakes like writing a 64 bit value into a 32 bit space (overwriting unintended data), or multi-threaded mutable access to the same memory. Rust's borrow checker effectively eliminates data races in safe code and strong type safety prevents unintended clobbering.
+* **Thread Safety** prevents inter-thread race conditions, such as one thread exiting when another thread is waiting on data from it. Rust provides some robust tools for managing thread pools integrated into its type system, however some mistakes are still possible if the programmer works hard enough to accomplish them.
 
-Rust advertises both type safety and data safety, accomplishing both very effectively. There is still research and development to be done before it can truthfully bill itself as thread-safe, but this type of safety is perhaps the most elusive.
+Rust advertises both type safety and data safety. There is still research and development to be done before it can be truly  thread-safe.
 
-# Tooling
+## Tooling
 
-One significant advantage of using Rust over its alternatives is its robust, opinionated set of tooling. The Rust standard distribution includes `rustc` (the compiler), `cargo` (a package manager and build tool), and `rustdoc` (a documentation generator). Currently there is work being done on a `rustfmt` which would function the same as Go's venerable `gofmt`.
+Rust has a robust, opinionated set of tooling. The Rust standard distribution includes `rustc` (the compiler), `cargo` (a package manager and build tool), and `rustdoc` (a documentation generator). Currently there is work being done on a `rustfmt` which would function the same as Go's venerable `gofmt`.
 
 Package management via `cargo` is a feature Rust has inherited from several other modern languages. All package dependencies, build options, and tasks are defined in a `Cargo.toml` file. Dependencies are checked and (if necessary) pulled on `cargo build`, `test`, or `doc`.
 
@@ -640,7 +645,7 @@ fn test_fails() {
 
 Having a standardized, high quality documentation format is invaluable for programmers, and Rust facilitates this. Documentation comments are can be placed anywhere in the code using `///` for function level documentation or `//!` for module level documentation. Documentation is in a common markdown format, code samples included in the documentation are automatically processed as unit tests. Generating documentation is done by `cargo doc`, which generates HTML and manpage documentation. Many Rust projects even go so far as to automate the unit testing and documentation generation step and hook it into their git commits [@travis-docs].
 
-# Community
+## Community
 
 One of the biggest dangers in choosing a language that "Is not C" to teach operating systems in is that it can be very difficult for students to get help.
 
@@ -648,8 +653,8 @@ Mozilla's IRC network hosts the popular #rust channel which regularly has over 8
 
 Best of all, there is active operating system development in Rust. There is a project to develop `coreutils` [@coreutils], a kernel [@rust-boot], operating systems [@reenix], and embedded system platforms [@zinc]. At the time of writing, these projects are young enough that students could even contribute components upstream.
 
-# Future Work
+# Conclusion and Future Work
 
-There is a considerable amount of research remaining regarding Rust's uses in systems code and programming in the large in general. We seek to foster knowledge of the language at the University of Victoria and are working on developing distributed consensus algorithms like Raft and next generation initialization systems in the spirit of OpenRC.
+In this work we have overviewed some of the reasons to consider Rust as the lanugage for a new generation of systems programmers by considering it's impact on classic bugs.  There is a considerable amount of research remaining regarding Rust's uses in systems code and programming in the large in general. We seek to foster knowledge of the language at the University of Victoria and are working on developing distributed consensus algorithms like Raft and next generation initialization systems in the spirit of OpenRC.
 
 # References
