@@ -385,9 +385,7 @@ fn main() {
 
 The only quality of the above code which may be at all suprising to programmers is the `!` at the end of the `println!()`. This notifies the programmer **explicitly** that they are using a macro. This is a consistent quality of Rust code throughout the language.
 
-> It is better to be explicit and promote understanding of what is occurring, than to expect the programmer to maintain all of this information in their head and engage in guesswork.
-
-This quality does not do away with conciseness or elegance of code. Community members have developed bindings for well-known tools like Redis [@redis] and found the APIs for equivalent Rust and Python actions of relatively similar "feel", despite the benefits of Rust's type system providing an additional safety net [@redis-api].
+It is better to be explicit and promote understanding of what is occurring, than to expect the programmer to maintain all of this information in their head and engage in guesswork. This is a key motivating factor behind our proposed adoption of Rust in OS courses, we believe this quality does not do away with conciseness or elegance of code. Community members have developed bindings for well-known tools like Redis [@redis] and found the APIs for equivalent Rust and Python actions of relatively similar "feel", despite the benefits of Rust's type system providing an additional safety net [@redis-api].
 
 Rust does, however, have significant semantic differences compared to C-like languages. For variable declaration, Rust has the `let` keyword which is *immutable by default*, mutability is opt-in via `let mut`. This opt-in mutability was found by the community to encourage better code. Instead of the programmer needing to remember to use `const` the compiler informs them of any variables they might have forgotten to make mutable or if it is unnecessarily mutable.
 
