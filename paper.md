@@ -8,7 +8,7 @@ address:
     address: Computer Science, University of Victoria
 tags: [Education, Rust, Operating Systems]
 abstract: |
-    Some bugs are just that - a one off.  A wayward moth that just happens to be innocently fluttering through the wrong relay at the wrong time.  But some kinds of bugs aren't like that.  Instead, they have risen to superstar popularity, plaguing veterans and newcomers alike.
+    Some bugs are just that --- a one off.  A wayward moth that just happens to be innocently fluttering through the wrong relay at the wrong time.  But some kinds of bugs aren't like that.  Instead, they have risen to superstar popularity, plaguing veterans and newcomers alike.
     But what if these aren't bugs at all?  What if they are actual deficiencies in safety and robustness offered by the C programming language as a consequence of the degree to which guesswork is introduced.  Here we explore a more explicit approach to systems level programming supported by Rust, which we believe will better promote understanding of design intent, and eliminate some of the guesswork.  We consider this in the context of an offering of a typical OS course, where students often first encounter these deficiencies, and in light of the classic bugs identified almost 15 years ago by Engler.  
 references:
   - id: rust
@@ -235,7 +235,7 @@ references:
       month: 06
       day: 30
   - id: dining-phil
-    title: Dining Philosphers in Rust
+    title: Dining Philosophers in Rust
     type: webpage
     URL: https://doc.rust-lang.org/book/dining-philosophers.html
     accessed:
@@ -433,7 +433,7 @@ enum Three {
 
 Cited by its creator [@billion-dollar] as a 'billion-dollar mistake' `null` is one of the most dangerous thorns in a programmers toolbox. For example, every time a programmer wishes to `malloc` they must check for the pointer to be a `null`, libraries return it often without forewarning, and it can appear in hard to debug situations during data races. This all happens implicitly, the author of the code must keep all of the information about the system in their head. Worse, the consequences for making a mistake could be dramatic in lower level code. Segfaults, deadlocks, and system failure are all very real possibilities when exploring complex OS code. What's more is that all of these errors happen at *runtime* and may take down live systems, causing financial loss, destruction of property, or even loss of life.
 
-In languages like C, C++, and Java a tremendous amount of research and development time has gone into developing products like Coverity [@coverity] and PVS-Studio [@pvs-studio] to help discover possible null pointer consistencies. Engler et al [@deviant] suggest heuristic methods are used to determine the 'null state' of a variable throughout the control flow of a program. What if programmers could just stop worrying about `null` all together?
+In languages like C, C++, and Java a tremendous amount of research and development time has gone into developing products like Coverity [@coverity] and PVS-Studio [@pvs-studio] to help discover possible null pointer inconsistencies. Engler et al [@deviant] suggest heuristic methods are used to determine the 'null state' of a variable throughout the control flow of a program. What if programmers could just stop worrying about `null` all together?
 
 Many functional languages like Haskell and F# have the concept of an `Option`, a concept that Rust shares. Instead of needing to be aware of and check for `null` at every occurrence, the language semantics require the programmer to explicitly decide on the control flow for all values. It is common for newcomers to the language to dislike the "noise" this brings to the code, but once they understand the benefits of this design choice, and the ways to work with it, these complaints tend fade.
 
@@ -503,7 +503,7 @@ fn open_and_read() -> Result<String, MyError> {
 }
 ```
 
-Error handling in Rust is explicit, composable, and sane. There are no exceptions, nulls, 'magic numbers' (like -1) or anything that may prevent the programmer from handling the error as *they* choose to, even if that is to simply `.unwrap()` it and crash on failure.
+Error handling in Rust is explicit, composable, and sane. There are no exceptions, nulls, 'magic numbers' (like -1) or anything that may prevent the programmer from handling the error as *they* choose to, even if that is to simply `.unwrap()` it. It's worth noting that even `.unwrap()`ing does not actually crash the program as normally it unwinds the stack, isolating failure to a single thread and preventing inconsistent state.
 
 # Borrow and Move: Forget `free()`
 
