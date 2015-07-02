@@ -1,6 +1,6 @@
 ---
 title: Understanding Over Guesswork
-subtitle: Bugs as Linguistic Deficiencies
+subtitle: Evolving How We Learn Systems with Lessons from Programming in the Large
 author:
   - name: Andrew Hobden
   - name: Yvonne Coady
