@@ -1,5 +1,6 @@
 ---
 title: Understanding Over Guesswork
+subtitle: Bugs as Linguistic Deficiencies 
 author:
   - name: Andrew Hobden
     affiliation: 1
