@@ -345,15 +345,16 @@ Instructors may also find themselves struggling, as these assignments can be dif
 
 On top of the complexity, the ambiguity of language features means that year after year every set of students hit the same bugs, at least eventually.  
 
-Engler et al identified a number of problem classes in their work in static analysis that offer students and professionals alike stumbling blocks, particularly when working with systems code like C. [@deviant] They are namely:
+Engler et al identified a number of problem classes in their work in static analysis that offer students and professionals alike stumbling blocks, particularly when working with systems code like C [@deviant]. They are namely:
 
-* Does lock `L` protect `V`?
-* Must `A` be paired with `B`?
 * Can routine `F` fail?
+* Must `A` be paired with `B`?
 * Does security check `Y` protect `X`?
 * Can `A` be done after `B`?
+* Does lock `L` protect `V`?
 
-Below we will proceed to show how Rust addresses these potential bugs in a sane, clean, and robust manner. In Rust, locks inherently protect data, not code (Section 10), RAII is used to ensure allocations are followed by frees (Section 7), routines with the potential for failure carry it explicitly in their function signature (Section 6), security checks can be forced by the type system or through marker traits for 'tainted' data (Section 8), and powerful move semantics eliminate use-after-free errors (Section 9).
+
+This short paper demonstrates precisely how Rust addresses these potential bugs in a clear, clean, safe and robust manner. After introducing Rust (Section 2), we will discuss how Rust approaches and helps solve to these common bug categories. In Rust, routines with the potential for failure carry it explicitly in their function signature (Section 3), RAII is used to ensure allocations are followed by frees (Section 4), security checks can be required by the type system or through marker traits for 'tainted' data (Section 5), powerful move semantics eliminate use-after-free errors (Section 6), and locks inherently protect data, not code (Section 7). We also discuss the goals of "Safety" Rust (Section 8) state of tooling (Section 9), community (Section 9), and research (Section 10) in Rust.
 
 
 # Introducing Rust
@@ -406,7 +407,7 @@ fn example_generic_alt<U>(reader: U) -> u64
     where U: Read
 ```
 
-# A Strong Type System
+## A Strong Type System
 
 While a dynamic type system is desirable in some areas, particularly in higher level code, things like implicit, possibly lossy data conversions can often be dangerous in system code. In our experience, many operating systems students also struggle with the mental concepts of pointers and their uses. This can lead to taking pointers as values and performing pointer arithmetic.
 
@@ -433,7 +434,7 @@ enum Three {
 }
 ```
 
-# We Don't Need A `null`
+## We Don't Need A `null`
 
 Cited by its creator [@billion-dollar] as a 'billion-dollar mistake' `null` is one of the most dangerous thorns in a programmers toolbox. For example, every time a programmer wishes to `malloc` they must check for the pointer to be a `null`, libraries return it often without forewarning, and it can appear in hard to debug situations during data races. This all happens implicitly, the author of the code must keep all of the information about the system in their head. Worse, the consequences for making a mistake could be dramatic in lower level code. Segfaults, deadlocks, and system failure are all very real possibilities when exploring complex OS code. What's more is that all of these errors happen at *runtime* and may take down live systems, causing financial loss, destruction of property, or even loss of life.
 
