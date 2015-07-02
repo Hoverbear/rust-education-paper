@@ -1,6 +1,6 @@
 ---
 title: Understanding Over Guesswork
-subtitle: Bugs as Linguistic Deficiencies 
+subtitle: Bugs as Linguistic Deficiencies
 author:
   - name: Andrew Hobden
     affiliation: 1
@@ -11,7 +11,8 @@ address:
     address: Computer Science, University of Victoria
 tags: [Education, Rust, Operating Systems]
 abstract: |
-  We discuss the merits of instructing operating systems courses using the modern systems programming language Rust from the point of view of the student, educator, and evaluator. We believe it provides an array of beneficial qualities that encourage understanding, best practices, and further study.
+    Some bugs are just that - a one off.  A wayward moth that just happens to be innocently fluttering through the wrong relay at the wrong time.  But some kinds of bugs aren't like that.  Instead, they have risen to superstar popularity, plaguing veterans and newcomers alike.
+    But what if these aren't bugs at all?  What if they are actual deficiencies in safety and robustness offered by the C programming language as a consequence of the degree to which guesswork is introduced.  Here we explore a more explicit approach to systems level programming supported by Rust, which we believe will better promote understanding of design intent, and eliminate some of the guesswork.  We consider this in the context of an offering of a typical OS course, where students often first encounter these deficiencies, and in light of the classic bugs identified almost 15 years ago by Engler.  
 references:
   - id: rust
     title: Rust
