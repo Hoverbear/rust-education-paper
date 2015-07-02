@@ -375,7 +375,7 @@ It accomplishes these features through a number of novel features largely built 
 
 ## Rust Basics
 
-To someone familiar with C or any of the ML dialects the syntax of Rust will appear reasonably familiar. A 'Hello World' in Rust looks like the following:
+To someone familiar with C/C++ the syntax of Rust will appear reasonably familiar. A 'Hello World' in Rust looks like the following:
 
 ```rust
 fn main() {
@@ -505,9 +505,8 @@ Error handling in Rust is explicit, composable, and sane. There are no exception
 
 # Borrow and Move: Forget `free()`
 
-Memory management is hard, that's why many programmers like garbage collectors. These days there are mark-and-sweep GCs, tracing GCs, generational GCs, and all sorts of exotic algorithms to sweep up unused memory. This all arises from the assumption that compilers cannot perform enough static analysis to accurately trace the lifetime of a value throughout the execution of a program. For many languages this is quite true, C being one of the primary offenders.
-
-In Rust there is the notion of moving, copying, and referencing. Like C and C++, Rust features a powerful pointer system that allows programmers to make fine-grain, informed decisions about how values are stored, passed, and represented. Like C++, Rust makes use of a concept called Resource Acquisition is Instantiation (RAII). Rust goes a step further, introducing the distinction between *immutably borrowing* (`&`), *mutably borrowing* (`&mut`), *copying* (`Copy` trait), and *moving* values. At any given time there may be any number of *immutable borrows*, meanwhile there may only be one *mutable borrow*, and a value may not be used in the function once it has been *moved* out.
+In Rust there is the notion of moving, copying, and referencing. In some ways Rust's memory model
+is similar to C/C++'s. It features a powerful pointer system that allows programmers to make fine-grain, informed decisions about how values are stored, passed, and represented. Like C++, Rust makes use of a concept called Resource Acquisition is Instantiation (RAII). Rust goes a step further, introducing the distinction between *immutably borrowing* (`&`), *mutably borrowing* (`&mut`), *copying* (`Copy` trait), and *moving* values. At any given time there may be any number of *immutable borrows*, meanwhile there may only be one *mutable borrow*, and a value may not be used in the function once it has been *moved* out.
 
 This makes it simple for a programmer to observe a function signature and determine which values the function may mutate or consume, and which it may return. Using this information the compiler is able to determine the lifetime constraints of almost any value without additional notations. In (rare, complex) cases where it does require additional information the programmer can annotate lifetimes just as they would generic type parameters.
 
@@ -537,7 +536,7 @@ This behavior is very similar to C++'s RAII facilities and ensures all values ar
 
 # Traits: Zero-cost Abstractions
 
-Unlike many common languages today Rust does not use a class based or inheritance based system. Data is stored in `struct`s, primitives, or `enum`s which implement a set of traits that define how it interacts and which functions are available to it. To someone familiar with Java or C++, traits may feel like interfaces. For example, the `File` is a `struct` which implements `Read` and `Write` among other traits. Other structures like `TcpStream` and `UdpSocket` also implement the same `Read` and `Write` trait. Traits are zero-cost abstractions that act to encourage common interfaces and capabilities between like-structures. [@abstraction]
+Unlike many common languages today Rust does not use a class based or inheritance based system. Data is stored in `struct`s, primitives, or `enum`s which implement a set of traits that define how it interacts and which functions are available to it. For example, the `File` is a `struct` which implements `Read` and `Write` among other traits. Other structures like `TcpStream` and `UdpSocket` also implement the same `Read` and `Write` trait. Traits are zero-cost abstractions that act to encourage common interfaces and capabilities between like-structures. [@abstraction]
 
 ```rust
 struct Thing {
@@ -556,7 +555,7 @@ impl Foo for Thing {
 }
 ```
 
-This notion of composable traits aligns much more closely with the UNIX philosophy than classes and inheritance. Traits fit easily together, are widespread in their implementation, and allow for common interfaces between modules to permit better adaptability. Traits can also be used as 'markers' in design patterns like state machines to provide additional compile time verification of correctness.
+Traits fit easily together, are widespread in their implementation, and allow for common interfaces between modules to permit better adaptability. Traits can also be used as 'markers' in design patterns like state machines to provide additional compile time verification of correctness.
 
 # Static Analysis at the Core
 
@@ -608,7 +607,7 @@ use std::marker::Sync;
 use std::marker::Send;
 ```
 
-Other, more fearless forms of concurrency such as **sharing stack frames** is even encouraged by these models. This is done via a scoped thread model, and is currently considered unstable (requiring a `feature` flag) by Rust because the programmer is able to leak memory if the `JoinGuard` is treated incorrectly.
+Other, more fearless forms of concurrency such as **sharing stack frames** is even encouraged by these models. This is done via a scoped thread model.
 
 ```rust
 #![feature(scoped)]
@@ -673,5 +672,7 @@ Mozilla's IRC network hosts the popular #rust channel which regularly has over 8
 Best of all, there is active operating system development in Rust. There is a project to develop `coreutils` [@coreutils], a kernel [@rust-boot], operating systems [@reenix], and embedded system platforms [@zinc]. At the time of writing, these projects are young enough that students could even contribute components upstream.
 
 # Future Work
+
+There is a considerable amount of research remaining regarding Rust's uses in systems code and programming in the large in general. We seek to foster knowledge of the language at the University of Victoria and are working on developing distributed consensus algorithms like Raft and next generation initialization systems in the spirit of OpenRC.
 
 # References
