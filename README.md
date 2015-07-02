@@ -10,7 +10,6 @@ These documents are automatically updated a few minutes after any changes are ma
 
 If you wish to contribute please just open an issue or pull request with your suggestions or changes. If you are submitting changes please verify that `make` completes successfully.
 
-# Using This
+# License
 
-You may use the data and content of this paper for **any purpose** except copying signifigant portions without modification for inclusion in commercial or academic publications. If in doubt just ask me for permission, I would be happy to grant it to any entity not actively participating in what I define to be [evil](https://en.wikipedia.org/wiki/Douglas_Crockford#.22Good.2C_not_Evil.22).
-
+[CC-BY 4.0](https://creativecommons.org/licenses/by/4.0/)
