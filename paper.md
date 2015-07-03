@@ -613,7 +613,7 @@ This makes it simple for a programmer to observe a function signature and determ
 fn main() {
     // An owned, growable,
     // non-copyable string.
-    let foo = String::from("foo");
+    let mut foo = String::from("foo");
 
     // Introduce a new scope.
     {
@@ -743,7 +743,7 @@ fn test_fails() {
 }
 ```
 
-Having a standardized, high quality documentation format is invaluable for programmers, and Rust facilitates this. Documentation comments are can be placed anywhere in the code using `///` for function level documentation or `//!` for module level documentation. Documentation is in a common markdown format, code samples included in the documentation are automatically processed as unit tests. Generating documentation is done by `cargo doc`, which generates HTML and manpage documentation. Many Rust projects even go so far as to automate the unit testing and documentation generation step and hook it into their git commits [@travis-docs].
+Having a standardized, high quality documentation format is invaluable for programmers, and Rust facilitates this. Documentation comments can be placed anywhere in the code using `///` for function level documentation or `//!` for module level documentation. Documentation is in a common markdown format, code samples included in the documentation are automatically processed as unit tests. Generating documentation is done by `cargo doc`, which generates HTML and manpage documentation. Many Rust projects even go so far as to automate the unit testing and documentation generation step and hook it into their git commits [@travis-docs].
 
 ## Community
 
