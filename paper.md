@@ -127,7 +127,7 @@ references:
     title: Stability as a Deliverable
     type: webpage
     URL: https://doc.rust-lang.org/nightly/book/academic-research.html
-    authors:
+    author:
       - given: Aaron
         family: Turon
       - given: Niko
@@ -201,7 +201,7 @@ references:
   - id: region-cyclone
     title: "Region-Based Memory Management in Cyclone"
     type: webpage
-    authors:
+    author:
       - family: Grossman
       - family: Morrisett
       - family: Jim
@@ -288,7 +288,7 @@ references:
     container-title: Eighteenth ACM symposium on Operating systems principles (SOSP '01)
     publisher-place: ACM, New York, NY, USA
     page: 57-72
-    authors:
+    author:
       - given: Dawson
         family: Engler
       - given: David
@@ -310,7 +310,7 @@ references:
     container-title: Proceedings of the 6th Workshop on Programming Languages and Operating Systems (PLOS '11)
     publisher-place: ACM, New York, NY, USA
     page: 1:1--1:5
-    authors:
+    author:
       - given: Suman
         family: Saha
       - given: Julia
@@ -328,7 +328,7 @@ references:
     container-title: Proceedings of the 10th Workshop on ACM SIGOPS European Workshop
     publisher-place: ACM, New York, NY, USA
     page: 165--169
-    authors:
+    author:
       - given: Michael
         family: Hohmuth
       - given: Hendrik
@@ -351,7 +351,7 @@ references:
     volume: 49
     number: 5
     month: jun
-    authors:
+    author:
       - family: Chaudhary
         given: Sandeep
       - family: Fischmeister
@@ -371,7 +371,7 @@ references:
     publisher-place: Springer-Verlag, Berlin, Heidelberg
     page: 2--25
     acmid: 1883982
-    authors:
+    author:
       - family: Monperrus
         given: Martin
       - family: Bruch
@@ -392,7 +392,7 @@ references:
     publisher-place: IEEE Press, Piscataway, NJ, USA
     page: 925-935
     acmid: 2337332
-    authors:
+    author:
       - family: Pradel
         given: Michael
       - family: Jaspan
