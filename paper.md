@@ -339,7 +339,7 @@ Concurrency, parallelism, memory management, process scheduling, deadlocks, mute
 
 Instructors may also find themselves struggling, as these assignments can be difficult to create, and at times nearly impossible to evaluate effectively. Instructors and their markers desire assignments which are simple enough to fit into a few files, demonstrate understanding of failure modes, can be tested effectively in an automated fashion, and show students the caveats of their attempts to solve the problem. In many cases, a trade-off is necessary. For example, building an interactive shell is a common, and much loved, assignment in which instructors must balance the number of features required with the time provided. Features such as pipes, background tasks, tab-completion, and environment variables are all desirable and interesting to implement, but contribute greatly to the complexity of the code, as well as the amount of time it takes to evaluate.
 
-On top of the complexity, the ambiguity of language features means that year after year every set of new students hit the same old bugs---eventually.  Engler et al. [@deviant] identified a number of problem classes in their work in static analysis that offer students and professionals alike stumbling blocks, namely:
+On top of the complexity, the ambiguity of language features means that year after year new students hit the same old bugs---eventually.  Engler et al. [@deviant] identified a number of problem classes in their work in static analysis that has served as a foundation for many tools in systems [@Saha, @Homuth], applications [@Monperrus, @ Pradel]  and even compiler extensions derived from hardware specifications [@Chaudhary].  Students and professionals alike are perplexed by seemingly simple questions such as:
 
 * Can routine `F` fail?
 * Must `A` be paired with `B`?
@@ -356,20 +356,7 @@ In this short paper we demonstrate precisely how Rust addresses these potential 
 
 Rust [@rust] is a systems oriented ML-family language supported by Mozilla Research. It was originally conceived by Graydon Hoare and reached its first stable release on May 15, 2015 [@rust-release]. It is dual licensed Apache and MIT, fully open source, and governed through an extensive Request For Comment (RFC) process.
 
-Rust offers a robust set of desirable features for systems code:
-
-* Ahead-of-time compilation
-* Zero-cost abstractions
-* Move semantics
-* Guaranteed memory safety
-* Threads without data races
-* Trait-based generics
-* Pattern matching
-* Type inference
-* Minimal runtime (removable, @no-std)
-* No garbage collector or VM necessary
-* Efficient C bindings
-* Robust static analysis
+Rust offers a robust set of desirable features for systems code: ahead-of-time compilation, zero-cost abstractions, move semantics, guaranteed memory safety, threads without data races, trait-based generics, pattern matching, type inference, minimal runtime (removable, @no-std), no garbage collector or VM necessary, efficient C bindings and robust static analysis
 
 It accomplishes these features through a number of novel techniques largely built off its type system and the borrow checker. The Rust community has been working to firmly position Rust as a powerful tool for programming in ultra-large, [@uls], embedded, and networking systems.
 
