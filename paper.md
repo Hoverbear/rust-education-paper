@@ -8,7 +8,7 @@ address:
     address: Computer Science, University of Victoria
 tags: [Education, Rust, Operating Systems]
 abstract: |
-    Some bugs are just that---a one off.  A wayward moth that just happens to be innocently fluttering through the wrong relay at the wrong time.  But some kinds of bugs aren't like that.  Instead, they have risen to superstar status, plaguing veterans and newcomers alike.  But what if these aren't bugs at all?  What if they are actual deficiencies in safety and robustness offered by the C programming language as a consequence of the degree to which guesswork is introduced.  Here we explore a more explicit approach to systems level programming supported by Rust, which we believe will better promote understanding of design intent, and eliminate some of the guesswork.  Guided by a set of classic, but still relevant, bugs identified almost 15 years ago by Engler, we consider this in the context of the new generation of students learning about systems in a typical OS course, where students often first encounter these deficiencies.   
+    Some bugs are just that---a one off.  A wayward moth that just happens to be innocently fluttering through the wrong relay at the wrong time.  But some kinds of bugs aren't like that.  Instead, they have risen to superstar status, plaguing veterans and newcomers alike.  But what if these aren't bugs at all?  What if they are actual deficiencies in safety and robustness offered by the C programming language as a consequence of the degree to which guesswork is introduced.  Here we explore a more explicit approach to systems level programming supported by Rust, which we believe will better promote understanding of design intent, and eliminate some of the guesswork.  Guided by a set of classic, but still relevant, bugs identified almost 15 years ago by Engler, we consider this in the context of the new generation of students learning about systems in a typical OS course, where students often first encounter these deficiencies.
 references:
   - id: rust
     title: Rust
@@ -315,6 +315,109 @@ references:
       year: 2015
       month: 06
       day: 30
+  - id: Saha
+    title: "Finding Resource-release Omission Faults in Linux"
+    type: paper-conference
+    container-title: Proceedings of the 6th Workshop on Programming Languages and Operating Systems (PLOS '11)
+    publisher-place: ACM, New York, NY, USA
+    page: 1:1--1:5
+    authors:
+      - given: Suman
+        family: Saha
+      - given: Julia
+        family: Lawall
+      - given: Gilles
+        family: Muller
+    URL: http://doi.acm.org/10.1145/2039239.2039241
+    accessed:
+      year: 2015
+      month: 06
+      day: 30
+  - id: Homuth
+    title: "Applying Source-code Verification to a Microkernel: The VFiasco Project"
+    type: paper-conference
+    container-title: Proceedings of the 10th Workshop on ACM SIGOPS European Workshop
+    publisher-place: ACM, New York, NY, USA
+    page: 165--169
+    authors:
+      - given: Michael
+        family: Hohmuth
+      - given: Hendrik
+        family: Tews
+      - given: Shane
+        family: Stephens
+    URL: http://doi.acm.org/10.1145/1133373.1133405
+    accessed:
+      year: 2015
+      month: 06
+      day: 30
+  - id: Chaudhary
+    title: "em-SPADE: A Compiler Extension for Checking Rules Extracted from Processor Specifications"
+    type: article-journal
+    container-title: SIGPLAN Not.
+    publisher-place: ACM, New York, NY, USA
+    page: 105--114
+    iisn: 0362-1340
+    acmid: 2597823
+    volume: 49
+    number: 5
+    month: jun
+    authors:
+      - family: Chaudhary
+        given: Sandeep
+      - family: Fischmeister
+        given: Sebastian
+      - family: Tan
+        given: Lin
+    URL: http://doi.acm.org/10.1145/2666357.2597823
+    accessed:
+      year: 2015
+      month: 06
+      day: 30
+  - id: Monperrus
+    title: "Detecting Missing Method Calls in Object-oriented Software"
+    type: paper-conference
+    container-title: Proceedings of the 24th European Conference on Object-oriented Programming
+    series: ECOOP'10
+    publisher-place: Springer-Verlag, Berlin, Heidelberg
+    page: 2--25
+    acmid: 1883982
+    authors:
+      - family: Monperrus
+        given: Martin
+      - family: Bruch
+        given: Marcel
+      - family: Mezini
+        given: Mira
+    URL: http://dl.acm.org/citation.cfm?id=1883978.1883982
+    accessed:
+      year: 2015
+      month: 06
+      day: 30
+  - id: Pradel
+    title: "Statically Checking API Protocol Conformance with Mined Multi-object Specifications"
+    type: paper-conference
+    container-title: Proceedings of the 34th International Conference on Software Engineering
+    series: ICSE '12
+    year: 2012
+    publisher-place: IEEE Press, Piscataway, NJ, USA
+    page: 925-935
+    acmid: 2337332
+    authors:
+
+      - family: Pradel
+        given: Michael
+      - family: Jaspan
+        given: Ciera
+      - family: Aldrich
+        given: Jonathan
+      - family: Gross
+        given: Thomas R.
+    URL: http://dl.acm.org/citation.cfm?id=1883978.1883982
+    accessed:
+      year: 2015
+      month: 06
+      day: 30
   - id: coverity
     title: Coverity
     type: webpage
@@ -339,7 +442,7 @@ Concurrency, parallelism, memory management, process scheduling, deadlocks, mute
 
 Instructors may also find themselves struggling, as these assignments can be difficult to create, and at times nearly impossible to evaluate effectively. Instructors and their markers desire assignments which are simple enough to fit into a few files, demonstrate understanding of failure modes, can be tested effectively in an automated fashion, and show students the caveats of their attempts to solve the problem. In many cases, a trade-off is necessary. For example, building an interactive shell is a common, and much loved, assignment in which instructors must balance the number of features required with the time provided. Features such as pipes, background tasks, tab-completion, and environment variables are all desirable and interesting to implement, but contribute greatly to the complexity of the code, as well as the amount of time it takes to evaluate.
 
-On top of the complexity, the ambiguity of language features means that year after year new students hit the same old bugs---eventually.  Engler et al. [@deviant] identified a number of problem classes in their work in static analysis that has served as a foundation for many tools in systems [@Saha, @Homuth], applications [@Monperrus, @ Pradel]  and even compiler extensions derived from hardware specifications [@Chaudhary].  Students and professionals alike are perplexed by seemingly simple questions such as:
+On top of the complexity, the ambiguity of language features means that year after year new students hit the same old bugs---eventually.  Engler et al. [@deviant] identified a number of problem classes in their work in static analysis that has served as a foundation for many tools in systems [@Saha, @Homuth], applications [@Monperrus, @Pradel]  and even compiler extensions derived from hardware specifications [@Chaudhary].  Students and professionals alike are perplexed by seemingly simple questions such as:
 
 * Can routine `F` fail?
 * Must `A` be paired with `B`?
@@ -430,7 +533,7 @@ let mapped = maybe_foo.map(|x| x as f64);
 ```
 
 # Rust: Reducing Bugs through Linguistic Features
-In Rust, many common bugs can be prevented because: routines with the potential for failure carry it explicitly in their function signature (Section 3.1), RAII is used to ensure allocations are followed by frees (Section 3.2), security checks can be required by the type system or through marker traits for 'tainted' data (Section 3.3), powerful move semantics eliminate use-after-free errors (Section 3.4), and locks inherently protect data, not code (Section 3.4). 
+In Rust, many common bugs can be prevented because: routines with the potential for failure carry it explicitly in their function signature (Section 3.1), RAII is used to ensure allocations are followed by frees (Section 3.2), security checks can be required by the type system or through marker traits for 'tainted' data (Section 3.3), powerful move semantics eliminate use-after-free errors (Section 3.4), and locks inherently protect data, not code (Section 3.4).
 
 
 ## Results and `try!()`
