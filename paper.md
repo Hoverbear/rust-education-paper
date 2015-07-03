@@ -93,17 +93,6 @@ references:
       year: 2015
       month: 06
       day: 30
-  - id: billion-dollar
-    title: "Null References: The Billion Dollar Mistake"
-    author:
-      - given: Tony
-        family: Hoare
-    type: webpage
-    URL: http://www.infoq.com/presentations/Null-References-The-Billion-Dollar-Mistake-Tony-Hoare
-    accessed:
-      year: 2015
-      month: 06
-      day: 30
   - id: abstraction
     title: "Abstraction without overhead: traits in Rust"
     author:
@@ -404,7 +393,6 @@ references:
     page: 925-935
     acmid: 2337332
     authors:
-
       - family: Pradel
         given: Michael
       - family: Jaspan
@@ -430,6 +418,17 @@ references:
     title: PVS-Studio
     type: webpage
     URL: http://www.viva64.com/en/pvs-studio/
+    accessed:
+      year: 2015
+      month: 06
+      day: 30
+  - id: billion-dollar
+    title: "The Billion Dollar Mistake"
+    author:
+      - given: Tony
+        family: Hoare
+    type: webpage
+    URL: http://www.infoq.com/presentations/Null-References-The-Billion-Dollar-Mistake-Tony-Hoare
     accessed:
       year: 2015
       month: 06
