@@ -459,7 +459,7 @@ In this short paper we demonstrate precisely how Rust addresses these potential 
 
 Rust [@rust] is a systems oriented ML-family language supported by Mozilla Research. It was originally conceived by Graydon Hoare and reached its first stable release on May 15, 2015 [@rust-release]. It is dual licensed Apache and MIT, fully open source, and governed through an extensive Request For Comment (RFC) process.
 
-Rust offers a robust set of desirable features for systems code: ahead-of-time compilation, zero-cost abstractions, move semantics, guaranteed memory safety, threads without data races, trait-based generics, pattern matching, type inference, minimal runtime (removable, @no-std), no garbage collector or VM necessary, efficient C bindings and robust static analysis
+Rust offers a robust set of desirable features for systems code: ahead-of-time compilation, zero-cost abstractions, move semantics, guaranteed memory safety, threads without data races, trait-based generics, pattern matching, type inference, minimal runtime (removable, [@no-std]), no garbage collector or VM necessary, efficient C bindings and robust static analysis
 
 It accomplishes these features through a number of novel techniques largely built off its type system and the borrow checker. The Rust community has been working to firmly position Rust as a powerful tool for programming in ultra-large, [@uls], embedded, and networking systems.
 
